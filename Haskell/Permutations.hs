@@ -1,3 +1,5 @@
+import Data.List
+
 perms :: String -> [String]
 perms []	= []
 perms (x:[])	= [[x]]
@@ -14,3 +16,27 @@ f xs = map (spread xs)
 
 main = do
 	print (length (perms "abcdefghijk"))
+
+
+
+-- After comments from the forum
+
+perms1 [] = [[]]
+perms1 (x:xs) = do
+    prm <- perms1 xs
+    spread [x] prm
+
+spread' :: a -> [a] -> [[a]]
+spread' x xs = zipWith (\a b -> a ++ x:b) (inits xs) (tails xs)
+
+
+
+distinctPerms :: Ord a => [a] -> [[a]]
+distinctPerms = foldr inserts [[]] . group . sort
+inserts :: [a] -> [[a]] -> [[a]]
+inserts xs yss = yss >>= (mingle xs)
+mingle :: [a] -> [a] -> [[a]]
+mingle xs [] = [xs]
+mingle [] ys = [ys]
+mingle xxs@(x:xs) yys@(y:ys) 
+        = [x:zs | zs <- mingle xs yys] ++ [y:zs | zs <- mingle xxs ys]
