@@ -19,10 +19,15 @@ combinators that were not discussed in the article for reasons of space:
 
 ---------------------------------------------------------------------}
 
+
 module Parselib
    (Parser, item, sat, (+++), string, many, many1, sepby, sepby1,
     chainl, chainl1, char, digit, lower, upper, letter, alphanum,
-    symb, ident, nat, int, token, parse) where
+    symb,  nat, int, token, parse) where
+
+
+import Monad( MonadPlus( .. ) )
+
 
 infixr 5 +++
 
@@ -35,11 +40,11 @@ instance Monad Parser where
    p >>= f       = Parser (\cs -> concat [parse (f a) cs' |
                                      (a,cs') <- parse p cs])
 
-instance MonadZero Parser where
-   zero          = Parser (\cs -> [])
+--instance MonadZero Parser where
 
 instance MonadPlus Parser where
-   p ++ q        = Parser (\cs -> parse p cs ++ parse q cs)
+   p `mplus` q        = Parser (\cs -> parse p cs ++ parse q cs)
+   mzero          = Parser (\cs -> [])
 
 -- Other parsing primitives: -----------------------------------------
 
@@ -52,7 +57,7 @@ item             = Parser (\cs -> case cs of
                                      (c:cs) -> [(c,cs)])
 
 sat             :: (Char -> Bool) -> Parser Char
-sat p            = do {c <- item; if p c then return c else zero}
+sat p            = do {c <- item; if p c then return c else mzero}
 
 -- Efficiency improving combinators: ---------------------------------
 
@@ -61,9 +66,10 @@ force p          = Parser (\cs -> let xs = parse p cs in
                               (fst (head xs), snd (head xs)) : tail xs)
 
 (+++)           :: Parser a -> Parser a -> Parser a
-p +++ q          = Parser (\cs -> case parse (p ++ q) cs of
+p +++ q          = Parser (\cs -> case parse (p `mplus` q) cs of
                                      []     -> []
                                      (x:xs) -> [x])
+
 
 -- Recursion combinators: --------------------------------------------
 
@@ -94,6 +100,30 @@ p `chainl1` op   = do {a <- p; rest a}
 
 -- Useful parsers: ---------------------------------------------------
 
+
+isDigit x = x >= '0' && x <= '9'
+
+ord '0' = 48
+ord '1' = 49
+ord '2' = 50
+ord '3' = 51
+ord '4' = 52
+ord '5' = 53
+ord '6' = 54
+ord '7' = 55
+ord '8' = 56
+ord '9' = 57
+
+
+isLower c = c >= 'a' && c <= 'z'
+
+isUpper c = c >= 'A' && c <= 'Z'
+
+isAlpha c = isUpper c || isLower c
+
+isAlphanum c = isAlpha c || isDigit c
+
+
 char            :: Char -> Parser Char
 char c           = sat (c ==)
 
@@ -107,7 +137,7 @@ upper           :: Parser Char
 upper            = sat isUpper
 
 letter          :: Parser Char
-letter           = sat isAlpha
+letter           = upper +++ lower
 
 alphanum        :: Parser Char
 alphanum         = sat isAlphanum
@@ -115,10 +145,6 @@ alphanum         = sat isAlphanum
 symb            :: String -> Parser String
 symb cs          = token (string cs)
 
-ident           :: [String] -> Parser String
-ident css        = do cs <- token identifier
-                      guard (not (elem cs css))
-                      return cs
 
 identifier      :: Parser String
 identifier       = do {c <- lower; cs <- many alphanum; return (c:cs)}
@@ -138,7 +164,7 @@ integer          = do {char '-'; n <- natural; return (-n)} +++ nat
 -- Lexical combinators: ----------------------------------------------
 
 space           :: Parser String
-space            = many (sat isSpace)
+space            = many (sat (\x -> x == ' '))
 
 token           :: Parser a -> Parser a
 token p          = do {a <- p; space; return a}
@@ -147,16 +173,16 @@ apply           :: Parser a -> String -> [(a,String)]
 apply p          = parse (do {space; p})
 
 -- Example parser for arithmetic expressions: ------------------------
--- 
--- expr  :: Parser Int
--- addop :: Parser (Int -> Int -> Int)
--- mulop :: Parser (Int -> Int -> Int)
--- 
--- expr   = term   `chainl1` addop
--- term   = factor `chainl1` mulop
--- factor = token digit +++ do {symb "("; n <- expr; symb ")"; return n}
--- 
--- addop  = do {symb "+"; return (+)} +++ do {symb "-"; return (-)}
--- mulop  = do {symb "*"; return (*)} +++ do {symb "/"; return (div)}
---
+
+expr  :: Parser Int
+addop :: Parser (Int -> Int -> Int)
+mulop :: Parser (Int -> Int -> Int)
+
+expr   = term   `chainl1` addop
+term   = factor `chainl1` mulop
+factor = token digit +++ do {symb "("; n <- expr; symb ")"; return n}
+
+addop  = do {symb "+"; return (+)} +++ do {symb "-"; return (-)}
+mulop  = do {symb "*"; return (*)} +++ do {symb "/"; return (div)}
+
 ----------------------------------------------------------------------
