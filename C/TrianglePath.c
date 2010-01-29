@@ -38,16 +38,29 @@ void init(){
 	}
 }
 
-int PATH[N];
 
 int maxSum(int r, int c){
+	int n,s1,s2;
+	
+	n=ARRAY[r][c];
+
+	if (r == (N-1))return n;//The breaking condition
+
+	s1 = n + maxSum(r+1, c);
+	s2 = n + maxSum(r+1, c+1);
+
+	return ( s1 > s2 ) ? s1 : s2;
+}
+
+int PATH[N];
+int maxSum1(int r, int c){
 	int n,s1,s2;
 	n=ARRAY[r][c];
 	if(r==(N-1)){
 		return n;
 	}
-	s1=n+maxSum(r+1,c);
-	s2=n+maxSum(r+1,c+1);
+	s1=n+maxSum1(r+1,c);
+	s2=n+maxSum1(r+1,c+1);
 
 	if(s1>s2){
 		PATH[r+1]=0;
@@ -58,7 +71,6 @@ int maxSum(int r, int c){
 		return s2;
 	}
 }
-
 
 int main(){
 	int i;
