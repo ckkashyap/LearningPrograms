@@ -174,15 +174,23 @@ apply p          = parse (do {space; p})
 
 -- Example parser for arithmetic expressions: ------------------------
 
-expr  :: Parser Int
-addop :: Parser (Int -> Int -> Int)
-mulop :: Parser (Int -> Int -> Int)
+
+data Tree a = Nil | Node a (Tree a) (Tree a)
+	deriving (Show)
+
+
+tdigit           :: Parser (Tree Char)
+tdigit            = do {c <- sat isDigit; return (Node c Nil Nil)}
+
+expr  :: Parser (Tree Char)
+addop :: Parser (Tree Char -> Tree Char -> Tree Char)
+mulop :: Parser (Tree Char -> Tree Char -> Tree Char)
 
 expr   = term   `chainl1` addop
 term   = factor `chainl1` mulop
-factor = token digit +++ do {symb "("; n <- expr; symb ")"; return n}
+factor = token tdigit +++ do {symb "("; n <- expr; symb ")"; return (n)}
 
-addop  = do {symb "+"; return (+)} +++ do {symb "-"; return (-)}
-mulop  = do {symb "*"; return (*)} +++ do {symb "/"; return (div)}
+addop  = do {symb "+"; return (Node '+')} +++ do {symb "-"; return (Node '-')}
+mulop  = do {symb "*"; return (Node '*')} +++ do {symb "/"; return (Node '/')}
 
 ----------------------------------------------------------------------
