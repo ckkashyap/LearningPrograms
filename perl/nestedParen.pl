@@ -1,18 +1,16 @@
 $N=$ARGV[0];
 
 sub paren{
-	($o,$c,$s)=@_;
-	if($o==$N && $c==$N){
+	my($s,$no,$nc)=@_;
+	if($no==$N && $nc==$N){
 		print $s,"\n";
-		return;
 	}
-	if($o<$N){
-		&paren($o+1,$c,"$s(");
+	if($no<$N){
+		&paren("$s(",$no+1,$nc);
 	}
-	if($c<$o){
-		&paren($o,$c+1,"$s)");
+	if($no>$nc){
+		&paren("$s)",$no,$nc+1);
 	}
 }
 
-
-&paren(0,0,"");
+&paren("",0,0);
