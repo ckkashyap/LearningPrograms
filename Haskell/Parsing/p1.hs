@@ -194,3 +194,31 @@ addop  = do {symb "+"; return (Node '+')} +++ do {symb "-"; return (Node '-')}
 mulop  = do {symb "*"; return (Node '*')} +++ do {symb "/"; return (Node '/')}
 
 ----------------------------------------------------------------------
+--
+--
+
+data Tree2 leaf node = Leaf leaf    -- for numbers
+                    | Node2 node (Tree2 leaf node) (Tree2 leaf node)
+  deriving (Show)
+
+type OP = Char
+type BetterTree = Tree2 Int OP
+
+tnumB          :: Parser (BetterTree)
+tnumB          = do {i <- int; return (Leaf i)}
+
+exprB  :: Parser (BetterTree)
+addopB :: Parser (BetterTree -> BetterTree -> BetterTree)
+mulopB :: Parser (BetterTree -> BetterTree -> BetterTree)
+
+exprB  = termB  `chainl1` addopB
+termB  = factorB `chainl1` mulopB
+factorB = token tnumB +++ do {symb "("; n <- exprB; symb ")"; return (n)}
+
+addopB  = do {symb "+"; return (Node2 '+')} +++ do {symb "-"; return
+(Node2 '-')}
+mulopB  = do {symb "*"; return (Node2 '*')} +++ do {symb "/"; return
+(Node2 '/')}
+
+demo2 = parse exprB "10+5*6"
+
