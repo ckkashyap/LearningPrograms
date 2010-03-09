@@ -50,7 +50,7 @@ class Node
 			next if n.nil?
 			str.push(i+97)
 			Node.print(n,str)
-			str.pop
+			Wstr.pop
 		end
 	end
 end
@@ -61,18 +61,57 @@ def str2arr(str)
 	str.unpack("C*")
 end
 
-IO.readlines("/home/ckkashyap/words").each do |word|
-	word.downcase!
-	word.chomp!
-	next unless /^[a-z]+$/.match(word)
-	Node.addWord(tree,str2arr(word))
+#IO.readlines("/home/ckkashyap/words").each do |word|
+#	word.downcase!
+#	word.chomp!
+#	next unless /^[a-z]+$/.match(word)
+#	Node.addWord(tree,str2arr(word))
+#end
+
+
+print "Enter source word: "
+source=gets
+print "Enter destination word: "
+destination=gets
+
+
+
+queue=[]
+
+class Entry
+	def initialize(w,n)
+		@w=w.clone
+		@n=n
+	end
+	def getDistance
+		@n
+	end
+	def getWord
+		@w
+	end
 end
 
-loop do
-	puts "Enter a word:"
-	x=gets
-	x.chomp!
-	puts Node.find(tree,str2arr(x))
+def getOneHopList(word,n)
+	list=[]
+	(word.length-1).times do |i|
+		c=word[i]
+		('a'..'z').each do |j|
+			next if j == c
+			word[i]=j
+			list.push(Entry.new(word,n))
+		end
+		word[i]=c
+	end
+	return list
 end
+
+queue.push(Entry.new(source,0))
+while queue.length > 0 do
+	x=queue.shift
+	l=x.getDistance
+	w=x.getWord
+	list=getOneHopList(w,l+1)
+end
+
 
 #puts Node.find(tree,str2arr("hello"))
