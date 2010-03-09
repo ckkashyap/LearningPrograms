@@ -1,6 +1,7 @@
 class Node
 	
 	def initialize
+		@exists=false
 		@children=[]
 		26.times do |i|
 			@children.push(nil)
@@ -38,7 +39,6 @@ class Node
 		nextNode=children[c]
 		return false if nextNode.nil?
 		return Node.find(nextNode,arr)
-
 	end
 
 	def Node.print(node,str)
@@ -61,11 +61,18 @@ def str2arr(str)
 	str.unpack("C*")
 end
 
-Node.addWord(tree,str2arr("abc"))
-Node.addWord(tree,str2arr("xyz"))
-Node.addWord(tree,str2arr("b"))
+IO.readlines("/home/ckkashyap/words").each do |word|
+	word.downcase!
+	word.chomp!
+	next unless /^[a-z]+$/.match(word)
+	Node.addWord(tree,str2arr(word))
+end
 
-Node.print(tree,[])
+loop do
+	puts "Enter a word:"
+	x=gets
+	x.chomp!
+	puts Node.find(tree,str2arr(x))
+end
 
-
-puts Node.find(tree,str2arr("abc"))
+#puts Node.find(tree,str2arr("hello"))
