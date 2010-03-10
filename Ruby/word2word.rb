@@ -64,6 +64,7 @@ print "Enter destination word: "
 destination=gets
 destination.chomp!
 
+print "Loading dictionary..."
 IO.readlines("words").each do |word|
 	word.downcase!
 	word.chomp!
@@ -72,6 +73,7 @@ IO.readlines("words").each do |word|
 #Node.addWord(tree,str2arr(word))
 	DICT[word]=1
 end
+puts "done."
 
 #loop do
 #	print "Enter a word: "
