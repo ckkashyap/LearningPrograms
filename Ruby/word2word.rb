@@ -68,7 +68,7 @@ IO.readlines("words").each do |word|
 	word.downcase!
 	word.chomp!
 	next unless /^[a-z]+$/.match(word)
-	next unless word.length != source.length
+	next if word.length != source.length
 #Node.addWord(tree,str2arr(word))
 	DICT[word]=1
 end
@@ -131,7 +131,7 @@ def getOneHopList(node,n)
 	word=node.getWord
 	length=word.length
 
-	(length-1).times do |i|
+	length.times do |i|
 		c=word[i]
 		('a'..'z').each do |j|
 			next if j == c
@@ -145,8 +145,6 @@ def getOneHopList(node,n)
 	return list
 end
 
-mm=0
-
 queue.push(Entry.new(source,0))
 while queue.length > 0 do
 	x=queue.shift
@@ -154,22 +152,20 @@ while queue.length > 0 do
 	w=x.getWord
 	if w==destination
 		p=x.getParent
+		solution=[]
 		loop do
-			puts w
+			solution.unshift(w)
 			x=p
 			w=x.getWord
 			p=x.getParent
 			break if p.nil?
 		end
+		solution.unshift(source)
+		puts solution.join(" -> ")
 		exit
 	end
 	list=getOneHopList(x,l+1)
-	if l > mm
-		puts "Processing level #{l} - queue has #{queue.length} entries - now #{list.length} more entries!!!"
-		mm=l
-	end
 	queue=queue+list
 end
 
 
-#puts Node.find(tree,str2arr("hello"))
