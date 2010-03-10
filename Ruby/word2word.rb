@@ -1,11 +1,7 @@
 class Node
-	
 	def initialize
 		@exists=false
-		@children=[]
-		26.times do |i|
-			@children.push(nil)
-		end
+		@children=Array.new(26)
 	end
 	def getChildren
 		return @children
@@ -22,7 +18,6 @@ class Node
 			node.wordExists=true
 		else
 			c=arr.shift
-			c=c-97
 			children=node.getChildren
 			nextNode=children[c]
 			nextNode=Node.new if nextNode.nil?
@@ -31,14 +26,11 @@ class Node
 		end
 	end
 	def Node.find(node,arr)
-		return false if arr.nil?
-		c=arr.shift
-		return node.wordExists? if c.nil?
-		c=c-97
-		children=node.getChildren
-		nextNode=children[c]
-		return false if nextNode.nil?
-		return Node.find(nextNode,arr)
+		arr.each do |i|
+			node=node.getChildren[i]
+			return false if node.nil?
+		end
+		node.wordExists?
 	end
 
 	def Node.print(node,str)
@@ -50,67 +42,133 @@ class Node
 			next if n.nil?
 			str.push(i+97)
 			Node.print(n,str)
-			Wstr.pop
+			str.pop
 		end
 	end
 end
 
 tree=Node.new
+DICT={}
 
 def str2arr(str)
-	str.unpack("C*")
+	str.unpack("C*").map! {|x| x-97}
 end
 
-#IO.readlines("/home/ckkashyap/words").each do |word|
-#	word.downcase!
-#	word.chomp!
-#	next unless /^[a-z]+$/.match(word)
-#	Node.addWord(tree,str2arr(word))
-#end
+
 
 
 print "Enter source word: "
 source=gets
+source.chomp!
 print "Enter destination word: "
 destination=gets
+destination.chomp!
+
+IO.readlines("words").each do |word|
+	word.downcase!
+	word.chomp!
+	next unless /^[a-z]+$/.match(word)
+	next unless word.length != source.length
+#Node.addWord(tree,str2arr(word))
+	DICT[word]=1
+end
+
+#loop do
+#	print "Enter a word: "
+#	w=gets
+#	w.chomp!
+#	
+#	ww=str2arr(w)
+#	l=w.length
+#	b=Time.now.to_f
+#	x1=Node.find(tree,ww)
+#	a=Time.now.to_f
+#	bt=(a-b)
+#
+#	b=Time.now.to_f
+#	x2=dict[w]
+#	a=Time.now.to_f
+#	ht=(a-b)
+#
+#	puts "BTree took #{bt} seconds to get #{x1}"
+#	puts "Hashtable took #{ht} seconds to get #{x2}"
+#	m=(bt>ht)?"Btree took more time":"HT took more time"
+#	puts m
+#end
 
 
-
-queue=[]
+queue=[] # queue of entries
 
 class Entry
-	def initialize(w,n)
-		@w=w.clone
-		@n=n
+	def initialize(w,n,p=nil)
+		@word=w.clone
+		@distance=n
+		@parent=p
 	end
 	def getDistance
-		@n
+		@distance
 	end
 	def getWord
-		@w
+		@word
+	end
+	def getParent
+		@parent
 	end
 end
 
-def getOneHopList(word,n)
+
+def existsInReturnPath(node,word)
+	p=node.getParent
+	while !p.nil?
+		return true if p.getWord == word
+		p=p.getParent
+	end
+	return false
+end
+
+def getOneHopList(node,n)
 	list=[]
-	(word.length-1).times do |i|
+	word=node.getWord
+	length=word.length
+
+	(length-1).times do |i|
 		c=word[i]
 		('a'..'z').each do |j|
 			next if j == c
 			word[i]=j
-			list.push(Entry.new(word,n))
+			if DICT[word] == 1
+				list.push(Entry.new(word,n,node)) unless existsInReturnPath(node,word)
+			end
 		end
 		word[i]=c
 	end
 	return list
 end
 
+mm=0
+
 queue.push(Entry.new(source,0))
 while queue.length > 0 do
 	x=queue.shift
 	l=x.getDistance
 	w=x.getWord
-	list=getOneHopList(w,l+1)
+	if w==destination
+		p=x.getParent
+		loop do
+			puts w
+			x=p
+			w=x.getWord
+			p=x.getParent
+			break if p.nil?
+		end
+		exit
+	end
+	list=getOneHopList(x,l+1)
+	if l > mm
+		puts "Processing level #{l} - queue has #{queue.length} entries - now #{list.length} more entries!!!"
+		mm=l
+	end
+	queue=queue+list
 end
 
 
