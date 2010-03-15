@@ -1,0 +1,52 @@
+\documentclass [a4paper,11pt] {article}
+
+
+\pagestyle {headings}
+
+\begin{document}
+
+%\newpage
+\title{This is a dummy title}
+\author{Kashyap}
+\maketitle
+%\newpage
+
+\begin{abstract}
+Now this is really just a trial document - article actually
+\end{abstract}
+
+
+\fbox{Hello world in a box}
+
+\makebox[1cm][r]{10 cm box!!!}
+
+
+\framebox[5cm][r]{10 cm box!!!}
+
+baseline \raisebox{1ex}{upward}baseline\raisebox{-1ex}{downward}baseline
+
+\fbox{%
+ \begin{minipage}[b][3cm][t]{2cm}
+  This is a minipage with a height of 3~cm with the text aligned
+  at the top.
+ \end{minipage}}\hfill
+\fbox{%
+ \begin{minipage}[b][3cm][c]{2cm}
+  In this minipage of same height, the text is vertically centered.
+ \end{minipage}}\hfill
+\fbox{%
+ \begin{minipage}[b][3cm][b]{2cm}
+  In this third box of same height, text is aligned at the bottom.
+ \end{minipage}}\hfill
+\fbox{%
+ \begin{minipage}[b][3cm][s]{2cm}
+  \baselineskip 10pt plus 2pt minus 2pt
+  In this fourth box of same height, the text is stretched
+  to fill in the entire vertical space.
+ \end{minipage}}
+
+
+
+ \fbox{\fbox{\parbox{.75\linewidth}{A parbox ...}}}
+
+\end{document}
