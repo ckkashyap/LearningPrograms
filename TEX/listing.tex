@@ -1,0 +1,36 @@
+\documentclass [a4paper,11pt] {article}
+
+\pagestyle {plain}
+\usepackage{listings}
+
+\begin{document}
+
+\lstset{language=C}
+
+\begin{lstlisting}
+int main(){
+	int i;
+	for(i=0;i<10;i++){
+		printf("Hello World");
+	}
+}
+\end{lstlisting}
+
+\lstset{language=Haskell,numbers=left}
+
+\begin{lstlisting}
+import Data.List
+
+\end{lstlisting}
+
+\lstset{language=Perl}
+
+\begin{lstlisting}
+import Data.List
+use Warnings;
+@list=(1,2,3);
+for $i (@list){
+	print "Hello World";
+}
+\end{lstlisting}
+\end{document}
