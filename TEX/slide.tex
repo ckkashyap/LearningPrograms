@@ -1,0 +1,23 @@
+\documentclass{prosper}
+
+\usepackage{tikz}
+
+\begin{document}
+\begin{slide}[Glitter]{The Title of the Slide}
+\begin{itemize}
+\item Item 1
+\item Item 2
+\item Item 3
+\end{itemize}
+\end{slide}
+
+\begin{slide}{The Title of the Slide}
+\begin{itemize}
+\item There should be a picture below
+\end{itemize}
+\begin{tikzpicture}
+\draw (-1.5,0) -- (1.5,0);
+\draw (0,-1.5) -- (0,1.5);
+\end{tikzpicture}
+\end{slide}
+\end{document}
