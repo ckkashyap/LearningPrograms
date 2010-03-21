@@ -1,0 +1,53 @@
+\documentclass {book}
+
+\usepackage{pstricks}
+\usepackage{pst-plot}
+\usepackage{pst-grad}
+
+\begin{document}
+
+\newrgbcolor{myorange}{0.9 0.6 0.2}
+\newrgbcolor{mylightorange}{0.95 0.8 0.2}
+
+\newpsobject{colgrid}%
+            {psgrid}%
+            {gridcolor=myorange,%
+             gridlabelcolor=red,%
+             subgridcolor=mylightorange}
+
+
+\psset{unit=0.75cm}
+\begin{pspicture}(-1,-1.5)(4,4.5)
+  \colgrid(-1,-1)(4,4)
+  \pscustom[linecolor=green,
+	fillstyle=gradient,
+	gradbegin=green,
+	gradend=orange,
+	gradmidpoint=1]{
+              \psline(0,0)(2,4)
+              \psplot[plotstyle=curve]{0}{2}{x 2 exp}}
+\end{pspicture}
+
+\newpsstyle{mystyle}%
+           {linestyle=solid,%
+            linewidth=2pt,%
+            linecolor=yellow,%
+            fillstyle=gradient,%
+            gradbegin=yellow,%
+            gradend=red,%
+            gradangle=10,%
+            gradmidpoint=1}
+
+\begin{pspicture}(0,-1.5)(5,4.5)
+  \pscustom[style=mystyle]{%
+    \pscurve(0.5,2)(1,1.75)(1.5,2)(2,2.5)%
+            (2.5,2.75)(3,2.6)(3.5,2.25)
+    \translate(1,-1)
+    \pscurve[liftpen=1]%
+       (3.5,2.25)(3,2.6)(2.5,2.75)%
+       (2,2.5)(1.5,2)(1,1.75)(0.5,2)
+    \closepath}
+\end{pspicture}
+
+
+\end{document}
