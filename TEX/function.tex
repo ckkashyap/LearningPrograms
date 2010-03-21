@@ -1,0 +1,22 @@
+\documentclass {book}
+
+\usepackage{pstricks}
+\usepackage{pst-plot}
+
+\begin{document}
+
+\newrgbcolor{myorange}{0.9 0.6 0.2}
+\newrgbcolor{mylightorange}{0.95 0.8 0.2}
+
+
+\begin{pspicture}(-2,-3)(2,3)
+  \psgrid[gridcolor=myorange,%
+          gridlabelcolor=red,% Data plotting
+          subgridcolor=mylightorange]
+  \psplot[plotstyle=curve,%
+          linecolor=blue]%
+         {-1.5}{1.5}{x 3 exp x sub}
+\end{pspicture}
+
+
+\end{document}
