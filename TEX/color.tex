@@ -1,0 +1,18 @@
+\documentclass {book}
+
+\usepackage{pstricks}
+\usepackage{pstcol}
+
+\begin{document}
+
+This is good
+\break
+\begin{pspicture}(0,0)(5,2)
+	\psframe(-1,-1)(6,6)
+	\psgrid[linecolor=blue](0,0)(0,0)(5,4)
+	\psline[linecolor=blue](1,1)(2,2)(3,1)(4,2)(5,1)
+	\psline[linearc=0.5,linecolor=red](1,1)(2,2)(3,1)(4,2)(5,1)
+\end{pspicture}
+
+
+\end{document}
