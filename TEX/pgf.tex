@@ -1,5 +1,8 @@
 \documentclass{article} % say
 \usepackage{tikz}
+
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit}
+
 \begin{document}
 We are working on
 
@@ -11,6 +14,9 @@ We are working on
 \end{tikzpicture}.
 
 \vspace{1cm}
+
+
+% Nodes are required from below
 
 \begin{tikzpicture}
   \draw (-1.5,0) -- (1.5,0);
@@ -153,6 +159,49 @@ We are working on
       By the Theorem of Pythagoras ...
     };
 \end{tikzpicture}
+
+
+\vspace{2cm}
+
+\begin{tikzpicture}
+  \node at ( 0,2) [circle,draw] {};
+  \node at ( 0,1) [circle,draw] {};
+  \node at ( 0,0) [circle,draw] {};
+  \node at ( 1,1) [rectangle,draw] {};
+  \node at (-1,1) [rectangle,draw] {};
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  [place/.style={circle,draw=blue!50,fill=blue!20,thick,
+                  inner sep=0pt,minimum size=6mm},
+   transition/.style={rectangle,draw=black!50,fill=black!20,thick,
+                       inner sep=0pt,minimum size=4mm}]
+  \node at ( 0,2) [place] {1};
+  \node at ( 0,1) [place] {2};
+  \node at ( 0,0) [place] {3};
+  \node at ( 1,1) [transition] {4};
+  \node at (-1,1) [transition] {5};
+\end{tikzpicture}
+
+\vspace{2cm}
+\begin{tikzpicture}
+  [place/.style={circle,draw=blue!50,fill=blue!20,thick,
+                  inner sep=0pt,minimum size=6mm},
+   transition/.style={rectangle,draw=black!50,fill=black!20,thick,
+                       inner sep=0pt,minimum size=4mm}]
+  \node[place]      (waiting)                            {};
+  \node[place]      (critical)       [below=of waiting] {};
+  \node[place]      (semaphore)      [below=of critical] {};
+  \node[transition] (leave critical) [right=of critical] {};
+  \node[transition] (enter critical) [left=of critical] {};
+  \draw [->] (enter critical) -- (critical);
+  \draw [->] (waiting) .. controls +(left:8mm) and +(up:8mm)
+                       .. (enter critical);
+\end{tikzpicture}
+
+
+
+
 
 \end{document}
 
