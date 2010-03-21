@@ -1,9 +1,11 @@
 \documentclass {book}
 
 \usepackage{pstricks}
-\usepackage{pstcol}
 
 \begin{document}
+
+\newrgbcolor{myorange}{0.9 0.6 0.2}
+\newrgbcolor{mylightorange}{0.95 0.8 0.2}
 
 This is good
 \break
@@ -14,5 +16,34 @@ This is good
 	\psline[linearc=0.5,linecolor=red](1,1)(2,2)(3,1)(4,2)(5,1)
 \end{pspicture}
 
+\vspace{2cm}
+
+\begin{pspicture}(0,0)(5,5)
+	\psgrid[gridcolor=myorange,subgridcolor=mylightorange]
+
+	\psdots[linecolor=red,dotsize=0 5](2,1)
+	\rput(2,1){\Large\color{blue} point}
+
+	\psdots[linecolor=red,dotsize=0 5](3,3)
+	\rput{45}(3,3){\Large\color{blue} point}
+	
+\end{pspicture}
+
+\vspace{2cm}
+
+
+\definecolor{PaleApricot}{cmyk}{0,0.12,0.32,0}
+\begin{pspicture}(-2,-2)(2,2)
+   \degrees[100]
+   \SpecialCoor
+   \pswedge*[linecolor=PaleApricot](0,0){2}{0}{40.2}
+   \pswedge*[linecolor=red](0,0){2}{40.2}{67.6}
+   \pswedge*[linecolor=yellow](0,0){2}{67.6}{87.9}
+   \pswedge*[linecolor=brown](0,0){2}{87.9}{100}
+   \rput{20.1}(1;20.2){40.2\%}
+   \rput{3.7}(1;53.7){27.4\%}
+   \rput{27.15}(1;77.15){20.3\%}
+   \rput{-5.55}(1;-5.55){\color{white} 11.1\%}
+\end{pspicture}
 
 \end{document}
