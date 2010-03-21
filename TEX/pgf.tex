@@ -54,9 +54,31 @@ We are working on
 \vspace{1cm}
 \begin{tikzpicture}
 	[kashyap/.style={help lines,color=blue!50}]
-	\draw[kashyap, rotate=30] (0,0) ellipse (30mm and 15mm);
+	\draw[kashyap,dashed, rotate=30] (0,0) ellipse (30mm and 15mm);
 	\draw[kashyap] (3,3) ellipse (30mm and 15mm);
 \end{tikzpicture}
+
+
+\vspace{1cm}
+\begin{tikzpicture}[scale=3]
+\draw[step=0.5cm,gray,very thin] (-1.4,-1.4) grid (1.4,1.4);
+\draw (-1.5,0) -- (1.5,0);
+\draw (0,-1.5) -- (0,1.5);
+\draw (0,0) circle (1cm);
+\filldraw[fill=green!20!white, draw=green!50!black] (0,0) -- (3mm,0mm) arc (0:30:3mm) -- cycle;
+\end{tikzpicture}
+
+\vspace{1cm}
+\begin{tikzpicture}[scale=3]
+\draw[step=0.5cm,gray,very thin] (-1.4,-1.4) grid (1.4,1.4);
+\draw (-1.5,0) -- (1.5,0);
+\draw (0,-1.5) -- (0,1.5);
+\draw (0,0) circle (1cm);
+\shadedraw[left color=gray,right color=green, draw=green!50!black] (0,0) -- (3mm,0mm) arc (0:30:3mm) -- cycle;
+\draw[red,very thick] (30:1cm) -- +(0,-0.5);
+\end{tikzpicture}
+
+
 
 
 \end{document}
