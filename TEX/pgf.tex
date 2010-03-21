@@ -78,7 +78,31 @@ We are working on
 \draw[red,very thick] (30:1cm) -- +(0,-0.5);
 \end{tikzpicture}
 
+\vspace{10cm}
 
+\begin{tikzpicture}[scale=3]
+  \clip (-2,-0.5) rectangle (2,1); 1 −2
+  \draw[step=.5cm,gray,very thin] (-1.4,-1.4) grid (1.4,1.4);
+  \filldraw[fill=green!20,draw=green!50!black] (0,0) -- (3mm,0mm) arc
+  (0:30:3mm) -- cycle;
+  \draw[->] (-1.5,0) -- (1.5,0) coordinate (x axis);
+                                    −1
+  \draw[->] (0,-1.5) -- (0,1.5) coordinate (y axis);
+  \draw (0,0) circle (1cm);
+  \draw[very thick,red]
+    (30:1cm) -- node[left=1pt,fill=white] {$\sin \alpha$} (30:1cm |- x axis);
+  \draw[very thick,blue]
+    (30:1cm |- x axis) -- node[below=2pt,fill=white] {$\cos \alpha$} (0,0);
+  \draw[very thick,orange] (1,0) -- node [right=1pt,fill=white]
+    {$\displaystyle \tan \alpha \color{black}=
+      \frac{{\color{red}\sin \alpha}}{\color{blue}\cos \alpha}$}
+    (intersection of 0,0--30:1cm and 1,0--1,1) coordinate (t);
+  \draw (0,0) -- (t);
+  \foreach \x/\xtext in {-1, -0.5/-\frac{1}{2}, 1}
+    \draw (\x cm,1pt) -- (\x cm,-1pt) node[anchor=north,fill=white] {$\xtext$};
+  \foreach \y/\ytext in {-1, -0.5/-\frac{1}{2}, 0.5/\frac{1}{2}, 1}
+    \draw (1pt,\y cm) -- (-1pt,\y cm) node[anchor=east,fill=white] {$\ytext$};
+\end{tikzpicture}
 
 
 \end{document}
