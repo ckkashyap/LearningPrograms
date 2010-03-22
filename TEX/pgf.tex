@@ -1,7 +1,7 @@
 \documentclass{article} % say
 \usepackage{tikz}
 
-\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,calc,matrix}
 
 \begin{document}
 We are working on
@@ -200,7 +200,119 @@ We are working on
 \end{tikzpicture}
 
 
+\vspace{1cm}
 
+                 \begin{tikzpicture}[
+nonterminal/.style={
+                       rectangle,
+                       minimum size=6mm,
+                       very thick,
+                       draw=red!50!black!50,
+                       % The filling:
+                       top color=white,
+                       bottom color=red!50!black!20,
+                       font=\itshape
+                     }]
+                   \node [nonterminal] {unsigned integer};
+                 \end{tikzpicture}
+
+\vspace{1cm}
+
+
+          \begin{tikzpicture}[node distance=5mm,
+                     terminal/.style={
+                                % The shape:
+                                rectangle,minimum size=6mm,rounded corners=3mm,
+                                % The rest
+                                very thick,draw=black!50,
+                                top color=white,bottom color=black!20,
+                                font=\ttfamily}]
+            \node (dot)   [terminal]                {.};
+            \node (digit) [terminal,right=of dot]   {digit};
+            \node (E)     [terminal,right=of digit] {E};
+          \end{tikzpicture}
+
+
+\vspace{1cm}
+
+
+%calc is required beyond this point
+
+          \begin{tikzpicture}[node distance=5mm,
+                     terminal/.style={
+                                % The shape:
+                                rectangle,minimum size=6mm,rounded corners=3mm,
+                                % The rest
+                                very thick,draw=black!50,
+                                top color=white,bottom color=black!20,
+                                font=\ttfamily}]
+ \node (dot)   [terminal]                {.};
+            \node (digit) [terminal,right=of dot]   {digit};
+            \node (E)     [terminal,right=of digit] {E};
+            \draw [help lines] let \p1 = (dot.base),
+                                   \p2 = (digit.base),
+                                   \p3 = (E.base)
+                               in (-.5,\y1) -- (3.5,\y1)
+                                  (-.5,\y2) -- (3.5,\y2)
+                                  (-.5,\y3) -- (3.5,\y3);
+          \end{tikzpicture}
+
+
+
+
+\vspace{1cm}
+
+
+\tikzset{terminal/.style={
+                                % The shape:
+                                rectangle,minimum size=6mm,rounded corners=3mm,
+                                % The rest
+                                very thick,draw=black!50,
+                                top color=white,bottom color=black!20,
+                                font=\ttfamily},
+nonterminal/.style={
+                       rectangle,
+                       minimum size=6mm,
+                       very thick,
+                       draw=red!50!black!50,
+                       % The filling:
+                       top color=white,
+                       bottom color=red!50!black!20,
+                       font=\itshape
+                     }}
+
+\begin{tikzpicture}[node distance=5mm and 5mm]
+  \node (ui1)   [nonterminal] {unsigned integer};
+  \node (dot)   [terminal,right=of ui1] {.};
+  \node (digit) [terminal,right=of dot] {digit};
+  \node (E)     [terminal,right=of digit] {E};
+  \node (plus) [terminal,above right=of E] {+};
+  \node (minus) [terminal,below right=of E] {-};
+  \node (ui2)   [nonterminal,below right=of plus] {unsigned integer};
+\end{tikzpicture}
+
+
+
+\vspace{1cm}
+Below is done using matrix
+\vspace{1cm}
+%matrix library required
+\begin{tikzpicture}
+Below is done using matrix
+  \matrix[row sep=1mm,column sep=5mm] {
+    % First row:
+      & & & & \node [terminal] {+}; & \\
+    % Second row:
+    \node [nonterminal] {unsigned integer}; &
+    \node [terminal]    {.};                &
+    \node [terminal]    {digit};            &
+    \node [terminal]    {E};                &
+                                            &
+    \node [nonterminal] {hello}; \\
+    % Third row:
+      & & & & \node [terminal] {-}; & \\
+  };
+\end{tikzpicture}
 
 
 \end{document}
