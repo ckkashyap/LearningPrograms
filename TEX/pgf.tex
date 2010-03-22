@@ -1,7 +1,7 @@
 \documentclass{article} % say
 \usepackage{tikz}
 
-\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,calc,matrix}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,calc,matrix,chains}
 
 \begin{document}
 We are working on
@@ -298,7 +298,6 @@ Below is done using matrix
 \vspace{1cm}
 %matrix library required
 \begin{tikzpicture}
-Below is done using matrix
   \matrix[row sep=1mm,column sep=5mm] {
     % First row:
       & & & & \node [terminal] {+}; & \\
@@ -312,6 +311,23 @@ Below is done using matrix
     % Third row:
       & & & & \node [terminal] {-}; & \\
   };
+\end{tikzpicture}
+
+
+\vspace{1cm}
+
+\begin{tikzpicture}[start chain,node distance=5mm, every node/.style={on chain,join}, every join/.style={->}]
+  \node [nonterminal] {unsigned integer};
+  \node [terminal]     {.};
+  \node [terminal]     {digit};
+  \node [terminal]     {E};
+  \begin{scope}[start branch=plus]
+    \node (plus) [terminal,on chain=going above right] {+};
+  \end{scope}
+  \begin{scope}[start branch=minus]
+    \node (minus) [terminal,on chain=going below right] {-};
+  \end{scope}
+  \node [nonterminal,join=with plus,join=with minus] {unsigned integer};
 \end{tikzpicture}
 
 
