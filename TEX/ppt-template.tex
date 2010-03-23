@@ -1,0 +1,440 @@
+    \documentclass{beamer}
+
+    \mode<presentation>
+    {
+      \usetheme{Darmstadt}
+      \setbeamercovered{transparent}
+    }
+
+    \usepackage[english]{babel}
+    \usepackage[latin1]{inputenc}
+    \usepackage{times}
+    \usepackage[T1]{fontenc}
+    \title[Markdown to PDF] % (optional, use only with long paper titles)
+    {Markdown to PDF}
+
+    \subtitle
+    {}
+
+    \author[Kashyap] % (optional, use only with lots of authors)
+    {C.K.Kashyap}
+
+    \institute[IBM] % (optional, but mostly needed)
+    {
+      International Business Machines\\
+      Hyderabad}
+
+%    \date[bragging] % (optional)
+%    {22 July, 2009 / bragging}
+
+    \subject{Computer boot up}
+
+    \pgfdeclareimage[height=0.74cm]{company-logo}{IBM}
+    \logo{\pgfuseimage{company-logo}}
+
+    %% sita, from page 67 of the beamer userguide
+    \setbeamertemplate{navigation symbols}{}
+
+    %% sita, copied from /usr/share/texmf/tex/latex/beamer/themes/outer/beamerouterthemeinfolines.sty
+    %% warning, only tested in Darmstadt theme; may not match others
+    %% (especially the vertical nav ones like Hannover).  FIXME: figure out how to
+    %% disable it when you use themes using vertical navigation
+    \defbeamertemplate*{footline}{infolines theme}
+    {
+      \leavevmode%
+      \hbox{%
+      \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+        \usebeamerfont{author in head/foot}\insertshortauthor~~(\insertshortinstitute)
+      \end{beamercolorbox}%
+      \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+        \usebeamerfont{title in head/foot}\insertshorttitle
+      \end{beamercolorbox}%
+      \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+        \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+        \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+      \end{beamercolorbox}}%
+      \vskip0pt%
+    }
+
+    % Delete this, if you do not want the table of contents to pop up at
+    % the beginning of each subsection:
+    \AtBeginSubsection[]
+    {
+      \begin{frame}<beamer>{Outline}
+        \small
+        \tableofcontents[currentsection,currentsubsection]
+      \end{frame}
+    }
+
+    % If you wish to uncover everything in a step-wise fashion, uncomment
+    % the following command:
+
+    % \beamerdefaultoverlayspecification{<+->}
+
+    \begin{document}
+
+    \begin{frame}
+      \titlepage
+    \end{frame}
+
+    %%#section \begin{frame}{Outline}
+    %%#section   \tableofcontents
+    %%#section   % You might wish to add the option [pausesections]
+    %%#section \end{frame}
+
+    % \section{sectionname}
+    % \subsection[short]{long}
+
+
+
+    \section{introduction}
+	    \subsection{Name}
+		    \begin{frame}{This is the story of my name}
+		    	\begin{itemize}
+				\item{Kashyap}
+				\pause
+				\item{CK}
+			\end{itemize}
+		    \end{frame}
+		    \begin{frame}{This is the rest of the story of my name}
+				\item{Kashyap}
+				\pause
+				\item{CK}
+		    \end{frame}
+
+    \subsection{profession}
+
+
+\section{the problem}
+
+\subsection{office software sucks}
+
+\begin{frame}{all office software sucks}
+
+\begin{itemize}
+\item
+but presentation software sucks more
+\item
+it requires too much mousing around
+\begin{itemize}
+\item
+doesn't matter if it is OpenOffice or MS Office
+\item
+I hate them both equally
+\end{itemize}
+\item
+and I hate mice
+\begin{itemize}
+\pause
+\item
+nasty, smelly, things
+\pause
+\item
+never even have a bath, what a life...
+\end{itemize}
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{My presentations}
+
+\begin{itemize}
+\item
+all these years, my presentations have consisted of
+\begin{itemize}
+\item
+plain text on plain white backgrounds
+\item
+with hardly any pictures
+\begin{itemize}
+\pause
+\item
+I start sweating if I have to make a picture or a chart
+\pause
+\item
+even if I'm using OpenOffice
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{My preferred editor}
+
+\begin{itemize}
+\item
+for everything and anything under the sun
+\pause
+\item
+is "\href{http://www.vim.org}{vim}"
+\pause
+\item
+even my firefox browser uses
+"\href{http://vimperator.mozdev.org/}{vimperator}", an extension which lets me
+use vi keystrokes instead of the mouse :-)
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{so the problem is this:}
+
+\begin{itemize}
+\pause
+\item
+I want to make presentations using plain text
+\pause
+\item
+and if they can look prettier and feel slicker, that's a bonus
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{in the interest of time}
+
+(...and your sanity)
+\linebreak
+\linebreak
+I will not bore you with all the stuff that failed...
+
+
+
+\end{frame}
+
+
+\section{the pieces start to fall in}
+
+\subsection{text to HTML}
+
+\begin{frame}{simple HTML made even simpler}
+
+\begin{itemize}
+\item
+I'd been using Markdown for a year or so now
+\item
+Markdown is one of the seventeen thousand or so markup languages in the
+world
+\begin{itemize}
+\item
+very simple text to HTML conversion
+\item
+indentation based for easy lists
+\item
+italics is like \texttt{*italics*}
+\item
+bold is like \texttt{**bold**}
+\begin{itemize}
+\item
+...and so on; more details
+\href{http://daringfireball.net/projects/markdown/}{here}
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+
+
+\end{frame}
+
+\subsection{LaTeX to PDF}
+
+\begin{frame}{detour: LaTeX}
+
+\begin{itemize}
+\item
+in the beginning, Don Knuth created TeX
+\begin{itemize}
+\item
+(yes, I know it's blasphemy to not format that correctly)
+\end{itemize}
+\item
+then Leslie Lamport created \href{http://www.latex-project.org/}{LaTeX}
+\begin{itemize}
+\item
+most popular and powerful text processing language in academia
+\end{itemize}
+\item
+then Till Tantau came up with
+\href{http://latex-beamer.sourceforge.net/}{Beamer}
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{beamer kicks ass}
+
+\begin{itemize}
+\item
+it produces PDF
+\pause
+\item
+some fantastic PDF actually
+\pause
+\item
+look at the slide navigation on this one and the other two
+\pause
+\item
+try clicking around to go to other parts of the PDF
+\pause
+\item
+I defy anyone to come up with this kind of navigation in MS or
+OpenOffice!
+\begin{itemize}
+\item
+I'm only showing three themes; there are many more
+\item
+and you can make your own (in fact all these have a subtle mod that my
+\texttt{mdbeamer} produces)
+\end{itemize}
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{so all I need is...}
+
+...some way to convert HTML to LaTeX-beamer syntax
+
+
+
+\end{frame}
+
+
+\section{the last piece}
+
+\subsection{HTML to LaTeX}
+
+\begin{frame}{is "mdbeamer.pl"}
+
+\begin{itemize}
+\item
+a 150-line perl program I wrote to convert HTML to beamer
+\item
+very simple, but handles all the markups I care about
+\item
+some parts of it feel a little kludgy because of the HTML in between
+\end{itemize}
+
+
+
+\end{frame}
+
+
+\section{bonus: images}
+
+\subsection{aka: text to graphics}
+
+\begin{frame}[fragile]{detour: graphviz}
+
+\begin{itemize}
+\item
+I'd recently discovered \href{http://www.graphviz.org/}{graphviz}
+\item
+excellent for drawing simple diagrams
+\item
+for example, this code
+
+\begin{verbatim}
+digraph {
+    node[fontsize=24]
+    a -> b -> c -> d
+    b -> p -> q -> x
+    p -> y
+}
+
+\end{verbatim}
+
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{detour: graphviz}
+
+\begin{itemize}
+\item
+produces this:
+\end{itemize}
+
+
+
+
+\end{frame}
+
+\begin{frame}[fragile]{and something like this...}
+
+\tiny
+
+\begin{verbatim}
+digraph G {
+    subgraph clusterCS {
+        label="Chennai server\n\ \ \ "
+
+        cs2 [shape=box, label="bare repo\non server", style=filled, fillcolor=green]
+        node [style=invis]
+        edge [style=invis]
+        cs1 -> cs2
+    }
+    subgraph clusterCL {
+        label="Commits on\nChennai Lead PC"
+
+        node [shape=box, style=rounded, style=filled, fillcolor=lightblue]
+        c1 [label = "Commit #1\n.gitignore"]
+        c2 [label = "Commit #2\nSource\nFiles"]
+        c1 -> c2
+    }
+    cs2 -> c2 [lhead=clusterCL, ltail=clusterCS, label = "push", dir=back, color=red, constraint = false]
+}
+
+\end{verbatim}
+
+
+
+
+\end{frame}
+
+\begin{frame}{produces this}
+
+
+
+
+\end{frame}
+
+
+\section{the end}
+
+\begin{frame}{so really the last piece}
+
+\begin{itemize}
+\item
+well, I'm taking the HTML and converting it to LaTeX anyway
+\item
+so, devise a simple syntax to embed graphviz code directly into the text
+\item
+and make my \texttt{mdbeamer} program
+\begin{itemize}
+\item
+extract that code
+\item
+call graphviz
+\item
+produce the image
+\end{itemize}
+\end{itemize}
+
+And.... we're done.  I can do pretty much everything in text now!  And
+\textbf{\textit{everything}} stays in one simple text file!
+
+\end{frame}
+
+
+\end{document}
