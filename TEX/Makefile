@@ -5,7 +5,7 @@ texfiles=$(wildcard *.tex)
 basenames=$(patsubst %.tex, %, $(texfiles))
 dvifiles=$(patsubst %.tex, %.dvi, $(texfiles))
 
-garbage=.dvi,.log,.aux,.ps,.pdf,.out,.nav,.toc,.snm
+garbage=.dvi,.log,.aux,.ps,.pdf,.out,.nav,.toc,.snm,.vrb
 
 
 %.dvi:%.tex
