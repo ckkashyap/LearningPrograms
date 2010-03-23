@@ -65,7 +65,7 @@ destination=gets
 destination.chomp!
 
 print "Loading dictionary..."
-IO.readlines("words").each do |word|
+IO.readlines("/usr/share/dict/words").each do |word|
 	word.downcase!
 	word.chomp!
 	next unless /^[a-z]+$/.match(word)
@@ -118,6 +118,7 @@ class Entry
 	end
 end
 
+AnotherHash=Hash.new
 
 def existsInReturnPath(node,word)
 	p=node.getParent
@@ -125,7 +126,12 @@ def existsInReturnPath(node,word)
 		return true if p.getWord == word
 		p=p.getParent
 	end
-	return false
+	if AnotherHash[word].nil?
+		AnotherHash[word]=1
+		return false
+	else
+		return true
+	end
 end
 
 def getOneHopList(node,n)
