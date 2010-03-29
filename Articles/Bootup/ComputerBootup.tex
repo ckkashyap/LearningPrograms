@@ -23,9 +23,55 @@ programming knowledge and a lot of curiousity to be able to to write up a
 processor gets power supply and it starts up.  Even the most powerful x86
 processor today starts up in a humble 8086 mode. It's {\emph Instruction
 	Pointer (IP)} register is set to some hard coded value that points to
-	some address in {\emph Read Only Memory (ROM)} that contains code to do {\emph Power On Self Test (POST)}. It's the POST code that makes the keyboard LED's blink at startup.\\
-		After POST, the first sector is read from the boot device and written to a specific location on {\emph Random Access Memory (RAM)} - at physical address {\it0x7C00}
+	some address in {\emph Read Only Memory (ROM)} that contains code to do
+{\emph Power On Self Test (POST)}. It's the POST code that makes the keyboard
+LED's blink at startup.\\ After POST, the first sector is read from the boot
+device and written to a specific location on {\emph Random Access Memory (RAM)}
+-- at physical address {\it0x7C00} -- and jumps to it. As you can imagine, our
+task is to get our ``Hello World'' in the first sector of the boot device.\\
 
+\section*{The {\emph Hello World} program}
+
+\texttt{[bits 16]}\break
+\texttt{[org 0x7c00] ; Be aware that the code is going to be loaded at 0x7c00}\break
+\texttt{}\break
+\texttt{mov ax,cs}\break
+\texttt{mov ds,ax}\break
+\texttt{mov ax,0xb800}\break
+\texttt{mov es,ax}\break
+\texttt{}\break
+\texttt{mov cx,[ds:len]}\break
+\texttt{mov si,hello}\break
+\texttt{mov di,0}\break
+\texttt{l1:}\break
+\texttt{mov ah,[ds:si]}\break
+\texttt{mov [es:di],ah}\break
+\texttt{inc si}\break
+\texttt{inc di}\break
+\texttt{mov byte [es:di],0x4f}\break
+\texttt{inc di}\break
+\texttt{loop l1}\break
+\texttt{}\break
+\texttt{hello:}\break
+\texttt{	db "HELLO WORLD"  }\break
+\texttt{len: 	dw \$-hello}\break
+\texttt{}\break
+\texttt{jmp \$}\break
+\texttt{}\break
+\texttt{times (510-(\$-\$\$)) db 0}\break
+\texttt{dw 0xaa55 ; Indicating the sector is a boot sector}\break
+\texttt{}\break
+\texttt{times ((512*18*80*2)-(\$-\$\$)) db 0}\break
+
+\section*{Compiling the code} Code in the previous section can be compiled
+using nasm. The resulting file is a bootable floppy image. Assuming that you saved the code in a filed called {\emph boot.nasm}, you can compile the same as follows --\\
+	      \\
+ {\texttt nasm boot.nasm -o floppy.img}
+	      \\
+
+You could test it out by using qemu or any other vitualization software. Using qemu, you could do this -- \\
+	    \\
+{\texttt qemu -hda floppy.img}
 
 
 \end{document}
