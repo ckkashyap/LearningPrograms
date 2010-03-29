@@ -1,7 +1,6 @@
 \documentclass{article}
 
 \usepackage{tikz}
-
 \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,calc,matrix,chains}
 
 
@@ -18,6 +17,15 @@ This article contains the essence of it all. It's meant for someone with
 programming knowledge and a lot of curiousity to be able to to write up a
 {\it Hello World} boot up program for an x86 PC.
 \end{abstract}
-\section*{Boot up process overview}
-When you switch on a computer (here on, computer would imply an x86 machine) a number of things happen.
+
+\section*{Boot up process overview} When you switch on a computer (here on,
+		computer would imply an x86 machine) among other things, the
+processor gets power supply and it starts up.  Even the most powerful x86
+processor today starts up in a humble 8086 mode. It's {\emph Instruction
+	Pointer (IP)} register is set to some hard coded value that points to
+	some address in {\emph Read Only Memory (ROM)} that contains code to do {\emph Power On Self Test (POST)}. It's the POST code that makes the keyboard LED's blink at startup.\\
+		After POST, the first sector is read from the boot device and written to a specific location on {\emph Random Access Memory (RAM)} - at physical address {\it0x7C00}
+
+
+
 \end{document}
