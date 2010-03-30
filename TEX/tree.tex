@@ -1,0 +1,19 @@
+\documentclass{article} % say
+\usepackage{tikz}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit}
+\begin{document}
+
+\begin{tikzpicture}
+	[every node/.style={fill=red!30,rounded corners},
+	edge from parent/.style={red,-o,thick,draw}]
+	\node {root}
+	child {node {left}}
+	child {node {right}
+		child {node {child}}
+		child {node {child}}
+	};
+
+\end{tikzpicture}
+
+\end{document}
+
