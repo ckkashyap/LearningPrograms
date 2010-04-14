@@ -1,0 +1,42 @@
+ digraph G {
+
+	 node [shape=box,fillcolor=lightblue,style=filled];
+
+	 phoneScreen -> decide1;
+	 decide1 -> writtenTest [label="yes"];
+	 decide1 -> reject [label="no"];
+
+	 writtenTest -> decide2;
+	 decide2 -> algorithm [label="yes"];
+	 decide2 -> reject [label="no"];
+
+	 algorithm -> decide3;
+	 decide3 -> puzzle [label="yes"];
+	 decide3 -> reject [label="no"];
+	 
+	 puzzle -> decide4;
+	 decide4 -> management [label="yes"];
+	 decide4 -> reject [label="no"];
+
+	 management -> decide5;
+	 decide5 -> accept [label="yes"];
+	 decide5 -> reject [label="no"];
+
+     phoneScreen [label="Phone screen"];
+     writtenTest [label="Written test"];
+     algorithm [label="Algorighms and Data Structures"];
+     puzzle [label="Puzzle"];
+     management [label="Management"];
+     
+
+     reject [shape=polygon,sides=6,fillcolor=red,color=red,style=filled,fontcolor=white];
+     accept [shape=polygon,sides=6,fillcolor=green,style=filled,fontcolor=white];
+
+     decide1 [shape=diamond,label="yes/no"];
+     decide2 [shape=diamond,label="yes/no"];
+     decide3 [shape=diamond,label="yes/no"];
+     decide4 [shape=diamond,label="yes/no"];
+     decide5 [shape=diamond,label="yes/no"];
+
+ }
+
