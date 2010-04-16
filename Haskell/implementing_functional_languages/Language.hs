@@ -127,8 +127,6 @@
    = iConcat [ iStr name, iStr " = ", iIndent (pprExpr expr) ]
 
 
- iConcat     :: [Iseq] -> Iseq
- iInterleave :: Iseq -> [Iseq] -> Iseq
 
 
 
@@ -145,12 +143,69 @@
  iAppend seq1 seq2 = IAppend seq1 seq2
  iStr str             = IStr str
 
+ -- Wei Hu start
+
+ iConcat     :: [Iseq] -> Iseq
+ iInterleave :: Iseq -> [Iseq] -> Iseq
+
+
+ iConcat     = foldr iAppend INil
+
+ iInterleave sep = foldr f INil
+                   where f x INil = x
+                         f x y = x `iAppend` sep `iAppend` y
 
 
 
+ pprExpr :: CoreExpr -> Iseq
+ pprExpr (ENum n) = iStr (show n)
+ pprExpr (EVar v) = iStr v
+                    
+ pprExpr (EAp (EAp (EVar op) e1) e2)
+   | op `elem` opNames = iConcat [ pprAExpr e1, iStr " ", iStr op, iStr " ", pprAExpr e2 ]
+ pprExpr (EAp e1 e2) = (pprAExpr e1) `iAppend` (iStr " ") `iAppend` (iIndent $ pprAExpr e2)
+
+ pprExpr (EConstr tag arity) = iConcat $ map iStr ["Pack{", show tag, ",", show arity, "}"]
 
 
 
+ pprExpr (ELet isrec defns expr)
+   = iConcat [  iStr keyword, iNewline,
+                iStr "  ",iIndent (pprDefns defns), iNewline,
+                iStr "  in ", iIndent $ pprExpr expr ]
+     where
+     keyword | not isrec = "let"
+             | isrec = "letrec"
+
+ pprExpr (ECase e alt)
+     = iConcat [ iStr "case ", iIndent (pprAExpr e), iStr " of", iNewline,
+                 iStr "  ", iIndent pprCases]
+       where pprCases = iInterleave sep (map pprCase alt)
+             sep = iConcat [ iStr ";", iNewline ]
+             pprCase (tag, vars, expr) = iConcat [ iStr "<", iStr $ show tag, iStr "> ",
+                                                   iInterleave (iStr " ") (map iStr vars),
+                                                   iStr " -> ", iIndent (pprExpr expr)]
+
+ pprExpr (ELam vars e)
+     = iConcat [ iStr "\\ ", iInterleave (iStr " ") (map iStr vars), iStr ". ", iIndent $ pprExpr e]
+
+ pprProgram :: CoreProgram -> Iseq
+ pprProgram defs = iInterleave sep (map pprDef defs)
+     where sep = iConcat [ iStr ";", iNewline ]
+           pprDef (name, args, e) = iConcat [ iStr name, iStr " ", iInterleave (iStr " ") (map iStr args),
+                                              iStr " = ", iIndent (pprExpr e)]
+					      
+
+					   
+ opNames  = ["+","-","*","/","<",">","&","|"] ++ ["==", "~=", ">=", "<=", "->"]
+
+
+ pprAExpr :: CoreExpr -> Iseq
+ pprAExpr e
+     | isAtomicExpr e = pprExpr e
+     | otherwise = iStr "(" `iAppend` pprExpr e `iAppend` iStr ")"
+
+-- Wei Hu end
 
 
 
