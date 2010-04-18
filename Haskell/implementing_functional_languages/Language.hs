@@ -86,9 +86,17 @@
 
 
 
+ pprExpr :: CoreExpr -> String
+ pprExpr (ENum n) = show n
+ pprExpr (EVar v) = v
+ pprExpr (EAp e1 e2) = pprExpr e1 ++ " " ++ pprAExpr e2
 
 
 
+ pprAExpr :: CoreExpr -> String
+ pprAExpr e 
+ 	| isAtomicExpr e  = pprExpr e
+        | otherwise = "(" ++ pprExpr e ++ ")"
 
 
 
@@ -117,16 +125,11 @@
 
 
 
- pprDefns :: [(Name,CoreExpr)] -> Iseq
- pprDefns defns = iInterleave sep (map pprDefn defns)
-                  where
-                  sep = iConcat [ iStr ";", iNewline ]
-
- pprDefn :: (Name, CoreExpr) -> Iseq
- pprDefn (name, expr)
-   = iConcat [ iStr name, iStr " = ", iIndent (pprExpr expr) ]
 
 
+
+ iConcat     :: [Iseq] -> Iseq
+ iInterleave :: Iseq -> [Iseq] -> Iseq
 
 
 
@@ -136,6 +139,9 @@
 
 
 
+ data Iseq = INil
+           | IStr String
+           | IAppend Iseq Iseq
 
 
 
@@ -143,69 +149,27 @@
  iAppend seq1 seq2 = IAppend seq1 seq2
  iStr str             = IStr str
 
- -- Wei Hu start
 
- iConcat     :: [Iseq] -> Iseq
- iInterleave :: Iseq -> [Iseq] -> Iseq
+ iIndent seq = seq
+ iNewline = IStr "\n"
 
 
- iConcat     = foldr iAppend INil
+ flatten :: [Iseq] -> String
 
- iInterleave sep = foldr f INil
-                   where f x INil = x
-                         f x y = x `iAppend` sep `iAppend` y
+ iDisplay seq = flatten [seq]
 
 
 
- pprExpr :: CoreExpr -> Iseq
- pprExpr (ENum n) = iStr (show n)
- pprExpr (EVar v) = iStr v
-                    
- pprExpr (EAp (EAp (EVar op) e1) e2)
-   | op `elem` opNames = iConcat [ pprAExpr e1, iStr " ", iStr op, iStr " ", pprAExpr e2 ]
- pprExpr (EAp e1 e2) = (pprAExpr e1) `iAppend` (iStr " ") `iAppend` (iIndent $ pprAExpr e2)
-
- pprExpr (EConstr tag arity) = iConcat $ map iStr ["Pack{", show tag, ",", show arity, "}"]
+ flatten [] = ""
 
 
-
- pprExpr (ELet isrec defns expr)
-   = iConcat [  iStr keyword, iNewline,
-                iStr "  ",iIndent (pprDefns defns), iNewline,
-                iStr "  in ", iIndent $ pprExpr expr ]
-     where
-     keyword | not isrec = "let"
-             | isrec = "letrec"
-
- pprExpr (ECase e alt)
-     = iConcat [ iStr "case ", iIndent (pprAExpr e), iStr " of", iNewline,
-                 iStr "  ", iIndent pprCases]
-       where pprCases = iInterleave sep (map pprCase alt)
-             sep = iConcat [ iStr ";", iNewline ]
-             pprCase (tag, vars, expr) = iConcat [ iStr "<", iStr $ show tag, iStr "> ",
-                                                   iInterleave (iStr " ") (map iStr vars),
-                                                   iStr " -> ", iIndent (pprExpr expr)]
-
- pprExpr (ELam vars e)
-     = iConcat [ iStr "\\ ", iInterleave (iStr " ") (map iStr vars), iStr ". ", iIndent $ pprExpr e]
-
- pprProgram :: CoreProgram -> Iseq
- pprProgram defs = iInterleave sep (map pprDef defs)
-     where sep = iConcat [ iStr ";", iNewline ]
-           pprDef (name, args, e) = iConcat [ iStr name, iStr " ", iInterleave (iStr " ") (map iStr args),
-                                              iStr " = ", iIndent (pprExpr e)]
-					      
-
-					   
- opNames  = ["+","-","*","/","<",">","&","|"] ++ ["==", "~=", ">=", "<=", "->"]
+ flatten (INil : seqs) = flatten seqs
 
 
- pprAExpr :: CoreExpr -> Iseq
- pprAExpr e
-     | isAtomicExpr e = pprExpr e
-     | otherwise = iStr "(" `iAppend` pprExpr e `iAppend` iStr ")"
+ flatten (IStr s : seqs) = s ++ (flatten seqs)
 
--- Wei Hu end
+
+ flatten (IAppend seq1 seq2 : seqs)  = flatten (seq1 : seq2 : seqs)
 
 
 
@@ -216,24 +180,6 @@
 
 
 
-
-
- data Iseq = INil
-           | IStr String
-           | IAppend Iseq Iseq
-           | IIndent Iseq
-           | INewline
-
- iIndent seq = IIndent seq
- iNewline    = INewline
-
-
- flatten :: Int                       -- Current column; 0 for first column
-             -> [(Iseq, Int)]         -- Work list
-             -> String                -- Result
-
-
- iDisplay seq = flatten 0 [(seq,0)]
 
 
 
@@ -292,16 +238,27 @@
  type Token = String           -- A token is never empty
 
 
+ clex (c:cs) | isWhiteSpace c = clex cs
+
+
+ clex (c:cs) | isDigit c = num_token : clex rest_cs
+              where
+              num_token = c : takeWhile isDigit cs
+              rest_cs   = dropWhile isDigit cs
 
 
 
+ clex (c:cs) | isAlpha c = var_tok : clex rest_cs
+              where
+              var_tok = c : takeWhile isIdChar cs
+              rest_cs = dropWhile isIdChar cs
 
 
 
+ clex (c:cs) = [c] : clex cs
 
 
-
-
+ clex [] = []
 
 
  isIdChar, isWhiteSpace :: Char -> Bool
@@ -325,8 +282,13 @@
  pLit :: String -> Parser String
 
 
+ pLit s (tok:toks) | s == tok = [(s, toks)]
+                   | otherwise = []
+ pLit s []         = []
 
 
+ pVar :: Parser String
+ pVar []         = []
 
 
 
@@ -393,7 +355,6 @@
  pSat :: (String -> Bool) -> Parser String
 
 
- pLit s = pSat (== s)
 
 
 
