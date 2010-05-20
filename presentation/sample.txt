@@ -1,0 +1,57 @@
+<!-- begin metadata
+    title=Perl
+    date=22 July, 2009
+    occasion=Tech talk
+    shortoccasion=techtalk
+    octoc=true
+end metadata -->
+
+# What is Perl
+
+## It's more than just a language
+
+### It is ofcourse a language
+  * but presentation software sucks more
+  * it requires too much mousing around
+      * doesn't matter if it is OpenOffice or MS Office
+      * I hate them both equally
+  * and I hate mice
+      * @@nasty, smelly, things
+      * @@never even have a bath, what a life...
+
+### There is this thing called Perl*ism*
+  * but presentation software sucks more
+  * it requires too much mousing around
+      * doesn't matter if it is OpenOffice or MS Office
+      * I hate them both equally
+  * and I hate mice
+      * @@nasty, smelly, things
+      * @@never even have a bath, what a life...
+
+# How to learn Perl
+
+## It's more than just a language
+
+### all office software sucks
+  * but presentation software sucks more
+  * it requires too much mousing around
+      * doesn't matter if it is OpenOffice or MS Office
+      * I hate them both equally
+  * and I hate mice
+      * @@nasty, smelly, things
+      * @@never even have a bath, what a life...
+
+
+# What can it do for you?
+
+## It's more than just a language
+
+### all office software sucks
+  * but presentation software sucks more
+  * it requires too much mousing around
+      * doesn't matter if it is OpenOffice or MS Office
+      * I hate them both equally
+  * and I hate mice
+      * @@nasty, smelly, things
+      * @@never even have a bath, what a life...
+
