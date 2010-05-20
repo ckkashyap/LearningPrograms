@@ -8,6 +8,7 @@ all: $(pdfs)
 	x=`basename $< .tex`; mv $$x.txt __$$x.txt; \
 	mv $$x.pdf __$$x.pdf; rm -f $$x*; mv __$$x.txt $$x.txt ; \
 	mv __$$x.pdf $$x.pdf;
+	echo "$@" >> junk_list
 
 
 
@@ -22,3 +23,4 @@ all: $(pdfs)
 
 clean:
 	rm -f $$(cat junk_list)
+	> junk_list
