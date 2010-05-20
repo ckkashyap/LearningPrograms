@@ -192,6 +192,9 @@ print "\\end{document}\n";
 __DATA__
     \documentclass{beamer}
 
+    \usecolortheme[RGB={138,43,226}]{structure} 
+
+
     \mode<presentation>
     {
       \usetheme{#style}
@@ -208,20 +211,23 @@ __DATA__
     \subtitle
     {#subtitle}
 
-    \author[Sitaram] % (optional, use only with lots of authors)
-    {Sitaram Chamarty}
+    \definecolor{yahoo}{RGB}{138,43,226}
+    \setbeamercolor{yahoo_color}{fg=white,bg=yahoo}
 
-    \institute[TCS] % (optional, but mostly needed)
+    \author[Kashyap] % (optional, use only with lots of authors)
+    {CK Kashyap}
+
+    \institute[Yahoo!] % (optional, but mostly needed)
     {
-      TCS Innovation Labs\\
-      Hyderabad}
+      Yahoo!\\
+      Bangalore}
 
     \date[#shortoccasion] % (optional)
     {#date / #occasion}
 
     \subject{Talks}
 
-    \pgfdeclareimage[height=0.74cm]{company-logo}{tcs}
+    \pgfdeclareimage[height=0.74cm]{company-logo}{yahoo}
     \logo{\pgfuseimage{company-logo}}
 
     %% sita, from page 67 of the beamer userguide
