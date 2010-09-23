@@ -1,0 +1,60 @@
+This project aims to complete a Haskell implementation for the book
+"Implementing Functional Languages: a tutorial". The components will
+include a parser and several versions of compiler and virtual machine,
+for the Core language, a stripped-down intermediate representation for
+functional programs. The long term goal includes a front-end for
+translating modern functional languages into (extended) Core, and a
+back-end targeted to LLVM.
+
+There's also a lecture note "The Construction of an SASL compiler" by
+Torsten Grust. SASL is a predecessor to Miranda. The backend approach
+is particularly interesting, using SKI reduction
+(http://c2.com/cgi/wiki?EssAndKayCombinators
+ http://en.wikipedia.org/wiki/Combinatory_logic
+ http://homepage.mac.com/sigfpe/Computing/sasl.html).
+
+The parser uses the Parsec-3 library. For a great tutorial on parser
+combinators, see http://www.cs.uu.nl/research/techreps/repo/CS-2008/2008-044.pdf,
+for uu-parsinglib (http://www.cs.uu.nl/wiki/bin/view/HUT/ParserCombinators).
+
+There's another parser combinator library, http://www.cs.york.ac.uk/fp/polyparse/.
+According to its homepage, "in Parsec, you must explicitly add a try
+combinator at any location where backtracking might be
+necessary. Users often find this a bit of a black art. In PolyParse by
+contrast, all parsers are backtracking unless you explicitly add a
+commit (or one of its variations). It is easy to tell where to add a
+commit point, because you have already parsed enough of a data
+structure to know that only one outcome is possible."
+Another thing I'm not sure about, is that Parsec is strict while PolyParse is lazy.
+
+The Core language is much simpler than GHC's Core. GHC can dump
+(-ddump-simpl) Core files for debugging purposes, and the ghc-core
+tool can be used as a pretty printer. This representation is different
+from "external Core" (-fext-core
+http://www.haskell.org/ghc/docs/latest/html/users_guide/ext-core.html),
+which is the IR usable by other tools. For example, the LHC back-end
+translates external Core into its own GRIN IR, and continues with its
+optimization and code generation. In the future when GHC supports
+reading back external Core, new front-ends and Core-to-Core
+transformers will be possible. For some programming examples, see
+http://darcs.haskell.org/ghc/utils/ext-core/ and
+http://hackage.haskell.org/cgi-bin/hackage-scripts/package/core. The
+latter is a parser and pretty printer written by the LHC authors.
+
+A real-world G-Machine bytecode example is yhc
+(http://haskell.org/haskellwiki/Yhc,
+http://www.cs.princeton.edu/~rdockins/pubs/TR-2007-2.pdf). Ghc also
+uses G-Machine but in a complex way.
+
+Some more resources for future reference:
+
+GHC and STG:
+http://uebb.cs.tu-berlin.de/lehre/2004WScompilerbau/ergebnisse/stg.pdf
+http://www.haskell.org/ghc/docs/papers/run-time-system.ps.gz
+Implementing lazy functional languages on stock hardware: the Spineless Tagless G-machine
+
+UHC's LLVM backend:
+http://www.cs.uu.nl/wiki/bin/viewfile/Stc/CompilingHaskellToLLVM?rev=1;filename=talk.pdf
+
+Epic, a simple functional language which compiles to C. Strict semantics by default, with lazy annotation.
+http://www.cs.st-andrews.ac.uk/~eb/epic.php
