@@ -14,4 +14,5 @@ deserializeHeader = do
 main :: IO ()
 main = do
   input <- BS.getContents
-  print $ runGet deserializeHeader input
+  let (a,b,c) = ( runGet deserializeHeader input)
+  putStrLn (show a)
