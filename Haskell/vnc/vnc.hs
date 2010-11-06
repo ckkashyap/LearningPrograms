@@ -23,7 +23,10 @@ main = do
 
 
 doVNC :: ServerRoutine
-doVNC (h,n,p) = do startRFB h
+doVNC (h,n,p) = do 
+			startRFB h
+			eventLoop h
+			
 
 
 startRFB :: Handle -> IO ()
@@ -45,19 +48,56 @@ startRFB h = do
 
 		putStrLn (show sharedOrNot)
 
-
 		BS.hPutStr h serverInitMessage
 		hFlush h
 
 
 
 
+eventLoop :: Handle -> IO ()
+eventLoop h = do
+		commandByte <- BS.hGet h 1
+		let command = runGet (do {x<-getWord8;return(x);}) commandByte
+		case command of
+			0 -> do 
+				putStrLn "SetPixelFormat"
+				handleSetPixelFormat h
+				eventLoop h
+			_ -> do
+				putStrLn "END OF LIFE"
+				putStrLn (show command)
+
+		
+handleSetPixelFormat :: Handle -> IO ()
+handleSetPixelFormat h = do
+	byteString <- BS.hGet h 20
+	let (
+		bpp,
+		depth,
+		bigEndian,
+		trueColor,
+		redMax,
+		greenMax,
+		blueMax,
+		redShift,
+		greenShift,
+		blueShift) = dingo byteString
+	putStrLn (show bpp)
+	return ()
+	where
+		dingo bs = runGet expr bs
+		expr = do
+			getWord32be
+			bpp <- getWord8
+			return (bpp,0,0,0,0,0,0,0,0,0)
+		
+	
 
 
 serverInitMessage :: BS.ByteString
 serverInitMessage = runPut $ do
-				putWord16be (300::Word16) -- width
-				putWord16be (300::Word16) -- height
+				putWord16be (400::Word16) -- width
+				putWord16be (400::Word16) -- height
 				--pixel format
 				putWord8 (32::Word8) -- bits per pixl
 				putWord8 (24::Word8) -- depth
@@ -76,10 +116,9 @@ serverInitMessage = runPut $ do
 				--name length
 				let name = "Haskell Framebuffer"
 				putWord32be (((fromIntegral.length) name)::Word32)
-				--mapM_ (putWord8.fromIntegral.ord) name
+				--mapM_ (putWord8.fromIntegral.ord) name --this works
 				putLazyByteString (B.pack name)
-
-				--putLazyByteString (stringToByteString name)
+				--putLazyByteString (stringToByteString name) --this works
 
 
 abcd = map (putWord8.fromIntegral.ord) "ABCD"
