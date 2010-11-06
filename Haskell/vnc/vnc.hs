@@ -6,7 +6,9 @@ import Control.Monad
 import System.IO
 
 import qualified Data.ByteString.Lazy as BS
+import Data.Char
 import Data.Binary.Get
+import Data.Binary.Put
 import Data.Word
 
 
@@ -17,6 +19,64 @@ main = do
 	waitFor running
 
 	where server = Server (SockAddrInet 5901 iNADDR_ANY) Stream doVNC
+
+
+doVNC :: ServerRoutine
+doVNC (h,n,p) = do startRFB h
+
+
+startRFB :: Handle -> IO ()
+startRFB h = do
+		hPutStr h "RFB 003.003\n"
+		hFlush h
+		
+		clientHeaderByteStream <- BS.hGet h 12
+		putStrLn (show clientHeaderByteStream)
+		let (m,n) = ( runGet readClientHeader clientHeaderByteStream)
+
+		-- Send 1 to the client, meaning, no auth required
+		BS.hPutStr h (BS.pack [0,0,0,1])
+		hFlush h
+
+		clientInitMessage <- BS.hGet h 1
+
+		let sharedOrNot = runGet (do {x<-getWord8;return(x);}) clientInitMessage
+
+		putStrLn (show sharedOrNot)
+
+
+		BS.hPutStr h serverInitMessage
+		hFlush h
+
+
+
+
+
+
+serverInitMessage :: BS.ByteString
+serverInitMessage = runPut $ do
+				putWord16be (300::Word16) -- width
+				putWord16be (300::Word16) -- height
+				--pixel format
+				putWord8 (32::Word8) -- bits per pixl
+				putWord8 (24::Word8) -- depth
+				putWord8 (1::Word8) -- big endian
+				putWord8 (1::Word8) -- true color
+				putWord16be (255::Word16) -- red max
+				putWord16be (255::Word16) -- green max
+				putWord16be (255::Word16) -- blue max
+				putWord8 (24::Word8) -- red shift
+				putWord8 (1::Word8)  -- green shift
+				putWord8 (1::Word8)  -- blue shift
+				--padding
+				putWord8 (0::Word8)
+				putWord8 (0::Word8)
+				putWord8 (0::Word8)
+				--name length
+				let name = "Haskell Framebuffer"
+				putWord32be (((fromIntegral.length) name)::Word32)
+				putLazyByteString (stringToByteString name)
+
 
 
 
@@ -41,16 +101,19 @@ readClientHeader  = do
 		else 
 		return (byteString2Number m,byteString2Number n)
 
-startRFB :: Handle -> IO ()
-startRFB h = do
-		hPutStrLn h "RFB 003.003"
-		hFlush h
-		x <- BS.hGet h 12
-		let (m,n) = ( runGet readClientHeader x)
-		hPutStrLn h (show m)
-		hFlush h
-		return ()
 			
--- |the simple echo server routine
-doVNC :: ServerRoutine
-doVNC (h,n,p) = do startRFB h
+
+word8ToByteString :: Word8 -> BS.ByteString
+word8ToByteString n = runPut $ putWord8 n
+
+word16ToByteString :: Word16 -> BS.ByteString
+word16ToByteString n = runPut $ putWord16be n
+
+
+word32ToByteString :: Word32 -> BS.ByteString
+word32ToByteString n = runPut $ putWord32be n
+
+
+stringToByteString :: String -> BS.ByteString
+stringToByteString str = BS.pack (map (fromIntegral.ord) str)
+
