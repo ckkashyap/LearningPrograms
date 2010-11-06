@@ -6,6 +6,7 @@ import Control.Monad
 import System.IO
 
 import qualified Data.ByteString.Lazy as BS
+import qualified Data.ByteString.Lazy.Char8 as B
 import Data.Char
 import Data.Binary.Get
 import Data.Binary.Put
@@ -75,9 +76,13 @@ serverInitMessage = runPut $ do
 				--name length
 				let name = "Haskell Framebuffer"
 				putWord32be (((fromIntegral.length) name)::Word32)
-				putLazyByteString (stringToByteString name)
+				--mapM_ (putWord8.fromIntegral.ord) name
+				putLazyByteString (B.pack name)
+
+				--putLazyByteString (stringToByteString name)
 
 
+abcd = map (putWord8.fromIntegral.ord) "ABCD"
 
 
 byteString2Number :: BS.ByteString -> Int
