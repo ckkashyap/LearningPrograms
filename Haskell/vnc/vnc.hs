@@ -70,7 +70,7 @@ eventLoop h = do
 					handleSetPixelFormat h
 				| c==RFB.setEncodings = do
 					putStrLn "SetEncodings"
-					fail "Done"
+					handleSetEncoding h
 				| otherwise = do
 					putStrLn (show c)
 					fail "DONE"
@@ -120,6 +120,25 @@ handleSetPixelFormat h = do
 			return (bpp,depth,bigEndian,trueColor,redMax,greenMax,blueMax,redShift,greenShift,blueShift)
 		
 	
+handleSetEncoding :: Handle -> IO ()
+handleSetEncoding h = do
+	byteString <- BS.hGet h 3
+	let numberOfTypes = runGet (do {getWord8;x<-getWord16be;return(x);}) byteString
+	putStrLn ("Number of supported encoding types = " ++ (show numberOfTypes))
+	readWords numberOfTypes
+	where
+		readWords 0 = putStrLn ("")
+		readWords n = do
+				bs <- BS.hGet h 4
+				let et = runGet (do {x<-getWord32be;return(x);}) bs
+				putStr ((show et) ++ " ")
+				readWords (n-1)
+
+
+
+
+
+		
 
 
 serverInitMessage :: BS.ByteString
