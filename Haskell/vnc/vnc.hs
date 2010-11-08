@@ -12,6 +12,7 @@ import Data.Binary.Get
 import Data.Binary.Put
 import Data.Word
 
+import qualified RFBConstants as RFB
 
 main :: IO ()
 main = do
@@ -19,7 +20,7 @@ main = do
 	putStrLn "server is accepting connections!!!"
 	waitFor running
 
-	where server = Server (SockAddrInet 5901 iNADDR_ANY) Stream doVNC
+	where server = Server (SockAddrInet 5900 iNADDR_ANY) Stream doVNC
 
 
 doVNC :: ServerRoutine
@@ -46,7 +47,8 @@ startRFB h = do
 
 		let sharedOrNot = runGet (do {x<-getWord8;return(x);}) clientInitMessage
 
-		putStrLn (show sharedOrNot)
+		if sharedOrNot==1 then putStrLn "Sharing enabled"
+			else putStrLn "Sharing disabled"
 
 		BS.hPutStr h serverInitMessage
 		hFlush h
@@ -58,19 +60,26 @@ eventLoop :: Handle -> IO ()
 eventLoop h = do
 		commandByte <- BS.hGet h 1
 		let command = runGet (do {x<-getWord8;return(x);}) commandByte
-		case command of
-			0 -> do 
-				putStrLn "SetPixelFormat"
-				handleSetPixelFormat h
-				eventLoop h
-			_ -> do
-				putStrLn "END OF LIFE"
-				putStrLn (show command)
+		putStrLn ("Command = " ++ (show command))
+		doCommand command
+		eventLoop h
+		where
+			doCommand c
+				| c==RFB.setPixelFormat = do 
+					putStrLn "SetPixelFormat"
+					handleSetPixelFormat h
+				| c==RFB.setEncodings = do
+					putStrLn "SetEncodings"
+					fail "Done"
+				| otherwise = do
+					putStrLn (show c)
+					fail "DONE"
+			
 
 		
 handleSetPixelFormat :: Handle -> IO ()
 handleSetPixelFormat h = do
-	byteString <- BS.hGet h 20
+	byteString <- BS.hGet h 19
 	let (
 		bpp,
 		depth,
@@ -82,14 +91,33 @@ handleSetPixelFormat h = do
 		redShift,
 		greenShift,
 		blueShift) = dingo byteString
-	putStrLn (show bpp)
+	putStrLn ("bpp = " ++ (show bpp))
+	putStrLn ("depth = " ++ (show depth))
+	putStrLn ("bigEndian = " ++ (show bigEndian))
+	putStrLn ("trueColor = " ++ (show trueColor))
+	putStrLn ("redMax = " ++ (show redMax))
+	putStrLn ("greenMax = " ++ (show greenMax))
+	putStrLn ("blueMax = " ++ (show blueMax))
+	putStrLn ("redShift = " ++ (show redShift))
+	putStrLn ("greenShift = " ++ (show greenShift))
+	putStrLn ("blueShift = " ++ (show blueShift))
 	return ()
 	where
 		dingo bs = runGet expr bs
 		expr = do
-			getWord32be
+			getWord16be
+			getWord8
 			bpp <- getWord8
-			return (bpp,0,0,0,0,0,0,0,0,0)
+			depth <- getWord8
+			bigEndian <- getWord8
+			trueColor <- getWord8
+			redMax <- getWord16be
+                        greenMax <- getWord16be
+                        blueMax <- getWord16be
+                        redShift <- getWord8
+                        greenShift <- getWord8
+                        blueShift <- getWord8
+			return (bpp,depth,bigEndian,trueColor,redMax,greenMax,blueMax,redShift,greenShift,blueShift)
 		
 	
 
