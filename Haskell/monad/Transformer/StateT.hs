@@ -4,11 +4,17 @@ import Control.Monad.State
 
 type MyState a = StateT Int IO a
 
+
+
 stateFun :: MyState String
 stateFun = do 
-  modify (+100)
+  modify (+1)
   liftIO (putStrLn "Hello!")
-  return "foo"
+  c <- liftIO $ getChar
+  x <- get
+  liftIO (putStrLn ("Hello!" ++ (show x)))
+  if x >= 4 then ((liftIO $ putStrLn "returning\n") >> return "foo")
+	  else stateFun
 
 main = do
   (s, n) <- runStateT (stateFun >> stateFun) 0
