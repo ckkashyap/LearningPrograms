@@ -2,6 +2,7 @@ import Data.IORef
 import Control.Concurrent
 import Control.Monad
 
+
 startThread ref = forever $ do
 			msg <- readIORef ref
 			putStrLn (show msg )
@@ -9,6 +10,11 @@ startThread ref = forever $ do
 			return ()
 
 
+action = do
+	ref <- newIORef "Hello"
+	t <- forkIO $ startThread ref
+	return ()
+	
 {-
 croudwear-lm:Haskell ckk$ ghci forkIO.hs 
 GHCi, version 6.12.3: http://www.haskell.org/ghc/  :? for help
