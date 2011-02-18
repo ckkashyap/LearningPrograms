@@ -35,7 +35,7 @@ secDiff (TOD secs1 psecs1) (TOD secs2 psecs2)
  = fromInteger (psecs2 - psecs1) / 1e12 + fromInteger (secs2 - secs1)
 
 r1 :: Int
-r1 = sumFibEuler 38 5300
+r1 = parSumFibEuler 38 5300
 
 main :: IO ()
 main = do
