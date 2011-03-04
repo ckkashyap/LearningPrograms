@@ -1,9 +1,10 @@
+import System.Environment
 import Text.ParserCombinators.Parsec
 import Numeric (readHex)
 
 data Tree a = Nil | Node a (Tree a ) (Tree a) deriving (Show)
 
-data Element = Number Int | Plus | Minus | Multiply | Divide deriving (Show)
+data Element = Number Float | Plus | Minus | Multiply | Divide deriving (Show)
 
 type AST = Tree Element
 
@@ -42,11 +43,29 @@ parseBase = do
 				return e
 
 
-parsePlus :: CharParser () AST
-parsePlus = do
-	return (Node (Number 1) Nil Nil)
-
 numParser :: CharParser () (Tree Element)
 numParser = do
-	c <- many1 (oneOf "1234567890")
-	return (Node (Number (read c:: Int)) Nil Nil)
+	f <- startWithDigit <|> startWithDot
+	return (Node (Number (read f:: Float)) Nil Nil)
+	where
+		dot = char '.'
+		startWithDigit = do
+			c1 <- digit
+			do
+				s1 <- digits
+				dot
+				s2 <- digits
+				return ([c1] ++ s1 ++ ['.'] ++ s2)
+			<|> startWithDot
+		startWithDot = do
+			dot
+			s1 <- digits
+			return ("0."++s1)
+		digits = many1 digit
+
+main=do
+	args <- getArgs
+	case args of
+		(str:_) -> let result = parse parseAST "" str in
+			putStrLn (show result)
+		_	-> putStrLn "Insufficient args"
