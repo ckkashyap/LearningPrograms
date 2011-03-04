@@ -52,7 +52,7 @@ numParser = do
 		startWithDigit = do
 			c1 <- digit
 			do
-				s1 <- digits
+				s1 <- many digit --many silently fails!!!
 				dot
 				s2 <- digits
 				return ([c1] ++ s1 ++ ['.'] ++ s2)
