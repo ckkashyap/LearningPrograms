@@ -1,4 +1,5 @@
-import Monad ( MonadPlus(..) )
+import Monad
+--import Monad ( MonadPlus(..) )
 
 data List a = Cons a (List a) | Empty
 	deriving Show

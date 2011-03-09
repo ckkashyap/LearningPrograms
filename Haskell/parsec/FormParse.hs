@@ -45,23 +45,28 @@ parseBase = do
 
 numParser :: CharParser () (Tree Element)
 numParser = do
-	f <- startWithDigit <|> startWithDot
+	many (char ' ')
+	f <- startWithDot <|> startWithDigit
+	many (char ' ')
 	return (Node (Number (read f:: Float)) Nil Nil)
 	where
-		dot = char '.'
 		startWithDigit = do
-			c1 <- digit
 			do
-				s1 <- many digit --many silently fails!!!
-				dot
-				s2 <- digits
-				return ([c1] ++ s1 ++ ['.'] ++ s2)
+				try $ do
+					s1 <- many digit
+					dot
+					s2 <- digits
+					return (s1 ++ ['.'] ++ s2)
+				<|> do
+					s1 <- many digit
+					return (s1)
 			<|> startWithDot
 		startWithDot = do
 			dot
 			s1 <- digits
 			return ("0."++s1)
 		digits = many1 digit
+		dot = char '.'
 
 main=do
 	args <- getArgs
