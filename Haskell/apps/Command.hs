@@ -1,12 +1,13 @@
-module Command (Command (..),getCommand) where
+module Command (getCommand) where
 
 import Text.ParserCombinators.Parsec
+import qualified Data.Map as Map
 
 type Key	= String
 type Value	= String
 
 data Command = 
-	  Command {command :: String, parameters :: [(Key,Value)]}
+	  Command {command :: String, parameters :: Map.Map String String}
 	| BadCommand
 	deriving (Show)
 
@@ -28,17 +29,17 @@ nameValuePair = do
 	char '"'
 	return (name,value)
 	
-commandParser :: CharParser () Command
+--commandParser :: CharParser () Command
 commandParser = do
 	cmd <- identifier
 	nv <- many (nameValuePair)
-	return Command {command = cmd, parameters = nv}
+	return (cmd, Map.fromList nv)
 
-getCommand :: String -> Command
+--getCommand :: String -> 
 getCommand str = let result = parse commandParser "" str
 	in
 		case result of
 			(Right command) -> command
-			_		-> BadCommand
+			_		-> ("BadCommand",Map.empty)
 	
 
