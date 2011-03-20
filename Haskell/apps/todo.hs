@@ -1,6 +1,20 @@
+{-# LANGUAGE NamedFieldPuns #-}
+
 import Data.Time
 import System.IO
 import Control.Monad.State
+
+import qualified Data.Map as Map
+import qualified Command as Command
+
+type KeyValueMap = Map.Map String String
+
+data Command = 
+	  New {newDescription :: String, newDueDate :: UTCTime}
+	| ListAll
+	| ListParticular {id :: Int}
+	| UpdateParticular {id :: Int}
+	deriving (Show)
 
 data Task = Task {
 	description :: String,
@@ -18,30 +32,55 @@ type Tasks = [Task]
 
 type MyState a = StateT Tasks IO a
 
+
+decoratedPrint :: String -> IO ()
+decoratedPrint str = do
+	putStrLn ""
+	putStrLn fullLine
+	putStrLn $ prefix ++ message ++ postfix
+	putStrLn fullLine
+
+	where
+		message = take 20 str
+		fullLine = take fullLineLength (repeat '*')
+		prefix = decorLengthStars ++ " "
+		postfix = " " ++ decorLengthStars
+		decorLengthStars = take decorLength (repeat '*')
+		decorLength = 5
+		fullLineLength = messageLength + 2 + (decorLength*2)
+		messageLength = length message
+
 prompt :: String -> MyState ()
 prompt str = liftIO $ do
 	putStr str
 	hFlush stdout
 	return ()
 
-addTask :: MyState ()
-addTask =  do
+addTask :: (Map.Map String String) -> MyState ()
+addTask p =  do
 	liftIO $ putStrLn "Adding a Task"
-	prompt "Enter the description: "
-	desc <- liftIO $ getLine
-	t <- get
-	ct <- liftIO getCurrentTime
-	let newTask = Task {description = desc, dueDate = ct, updates=[]}
-	put (newTask:t)
+	let (Just desc) = Map.lookup "desc" p
+	let (Just dt) = Map.lookup "due" p
+	let date = dt ++ " 00:00:00.000000 IST"
+	let ((utcTime,_):_) = reads date :: [(UTCTime,String)]
+	liftIO $ putStrLn (show utcTime)
+	task <- get
+	let newTask = Task {description = desc, dueDate = utcTime, updates=[]}
+	put (newTask:task)
 	return ()
 
 
 listTask :: MyState ()
 listTask = do
-	liftIO $ putStrLn "Will list the tasks"
-	t <- get
-	liftIO $ putStrLn (show t)
+	liftIO $ decoratedPrint "Task list"
+	tasks <- get
+	liftIO $ listTask' 1 tasks
 	return ()
+	where
+		listTask' _ [] = return ()
+		listTask' n ((Task {description,dueDate,updates}):ts) = do
+			putStrLn $ (show n) ++ ". "++ description 
+			listTask' (n+1) ts
 
 backupFile = "backup.txt"
 
@@ -62,46 +101,28 @@ save = do
 	return ()
 
 
+doTasks :: MyState ()
+doTasks = do
+	liftIO $ putStrLn "Enter command:"
+	line <- liftIO getLine
+	let (cmd,params) = Command.getCommand line
+	case cmd of
+		"quit"	-> return ()
+		"add"	-> addTask params >> doTasks
+		"list"	-> listTask >> doTasks
+		_	-> doTasks
 
-menu = [
-	(addTask, "Add a task"),
-	(listTask, "List tasks"),
-	(load,"Load"),
-	(save,"Save")
-	]
-
-	
-doMenu :: MyState ()
-doMenu = do
-	showMenu' 1 menu
-	option <- getOption
-	if (valid option) then
-		do
-			let (action,_) = menu!!(option-1)
-			action
-			doMenu
-		else
-			do
-				liftIO $ putStrLn "Invalid Option"
-				doMenu
-	where
-		showMenu' n ((_,s):es) = do
-			liftIO $ putStrLn $ (show n) ++ ". " ++ s 
-			showMenu' (n+1) es
-		showMenu' _ [] = return ()
-		getOption = do
-			prompt "Enter option: "
-			x <- liftIO $ getLine
-			let o = read x :: Int
-			return o
-		valid o = (o > 0) && (o <= (length menu))
-
-	
 
 
 main :: IO ()
 main = do
-	(s, t) <- runStateT doMenu []
+	--(s, t) <- runStateT doMenu []
+	(s, t) <- runStateT doTasks []
 	putStrLn (show t)
 	return ()
---	
+
+
+--main = do
+--	line <- getLine
+--	(command,_) <- Command.getCommand line
+--	main
