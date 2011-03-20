@@ -1,3 +1,6 @@
+/*
+http://courses.engr.illinois.edu/ece390/archive/archive-f2000/mp/mp4/anti.html
+*/
 void AALine(int x0, int y0, int x1, int y1)
 {
     int addr = (y0*640+x0)*4;
