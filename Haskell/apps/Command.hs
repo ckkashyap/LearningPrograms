@@ -1,64 +1,38 @@
-{-# LANGUAGE NamedFieldPuns #-}
-
 module Command (Command (..),getCommand) where
 
-import Data.Time
-import System.IO
-import Control.Monad.State
 import Text.ParserCombinators.Parsec
 
+type Key	= String
+type Value	= String
 
 data Command = 
-	  New {description :: String, dueDate :: UTCTime}
-	| ListAll
-	| ListParticular {taskId :: Int}
-	| UpdateParticular {taskId :: Int,description :: String}
+	  Command {command :: String, parameters :: [(Key,Value)]}
 	| BadCommand
 	deriving (Show)
 
+identifier :: CharParser () String
+identifier = do
+	c <- letter
+	cs <- many (alphaNum <|> char '_')
+	return (c:cs)
 
-tryNew :: CharParser () Command
-tryNew = try $ do
-	string "new"
-	char ' ' >> many (char ' ') -- on or more spaces
-	year <- nDigits 4
-	char '-'
-	month <- nDigits 2
-	char '-'
-	day <- nDigits 2
-	char ' ' >> many (char ' ') -- on or more spaces
-	desc <- many $ noneOf "."
-	char '.'
-	let t = read (year ++ "-" ++ month ++ "-" ++ day ++ " 00:00:00.000000 UTC") :: UTCTime -- hack TODO
-	return New {description = desc,dueDate=t}
-	where
-		nDigits 0 = return ""
-		nDigits n = do
-			d <- digit
-			ds <- nDigits (n-1)
-			return (d:ds)
-
-tryListAll :: CharParser () Command
-tryListAll = try $ do
-	string "list"
-	many (char ' ')
-	string "all"
-	return ListAll
-
-tryListParticular = try $ do
-	string "list"
-	many (char ' ')
-	n <- many1 digit
-	let tid = read n :: Int
-	return ListParticular {taskId = tid}
-
-
+nameValuePair :: CharParser () (Key,Value)
+nameValuePair = do
+	spaces
+	name <-identifier
+	spaces
+	char '='
+	spaces
+	char '"'
+	value <- many (noneOf "\"") -- TODO - we cannot get " into the string for now
+	char '"'
+	return (name,value)
+	
 commandParser :: CharParser () Command
-commandParser = 
-	    tryNew
-	<|> tryListParticular
-	<|> tryListAll
-
+commandParser = do
+	cmd <- identifier
+	nv <- many (nameValuePair)
+	return Command {command = cmd, parameters = nv}
 
 getCommand :: String -> Command
 getCommand str = let result = parse commandParser "" str
