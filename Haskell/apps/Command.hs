@@ -1,7 +1,14 @@
 module Command (getCommand) where
 
-import Text.ParserCombinators.Parsec
 import qualified Data.Map as Map
+
+import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec.Expr
+import qualified Text.ParserCombinators.Parsec.Token as TP
+import Text.ParserCombinators.Parsec.Language( javaStyle )
+
+
+stringLiteral   = TP.stringLiteral (TP.makeTokenParser javaStyle)
 
 type Key	= String
 type Value	= String
@@ -17,22 +24,31 @@ identifier = do
 	cs <- many (alphaNum <|> char '_')
 	return (c:cs)
 
-nameValuePair :: CharParser () (Key,Value)
-nameValuePair = do
+nameValuePairQuoted :: CharParser () (Key,Value)
+nameValuePairQuoted = try $ do
 	spaces
 	name <-identifier
 	spaces
 	char '='
 	spaces
-	char '"'
-	value <- many (noneOf "\"") -- TODO - we cannot get " into the string for now
-	char '"'
+	value <- stringLiteral
+	return (name,value)
+
+
+nameValuePair :: CharParser () (Key,Value)
+nameValuePair = try $ do
+	spaces
+	name <-identifier
+	spaces
+	char '='
+	spaces
+	value <- many (noneOf " ") 
 	return (name,value)
 	
 --commandParser :: CharParser () Command
 commandParser = do
 	cmd <- identifier
-	nv <- many (nameValuePair)
+	nv <- many (nameValuePairQuoted <|> nameValuePair)
 	return (cmd, Map.fromList nv)
 
 --getCommand :: String -> 
