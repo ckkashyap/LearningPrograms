@@ -1,35 +1,33 @@
-{-# LANGUAGE NamedFieldPuns #-}
-
-module TreeEdsl (process,TreeContext,endTree,addLeaf,addSubTree) where
+module TreeEdsl (process,TreeContext,insertLeaf,insertSubTree) where
 
 import Control.Monad.State
-import qualified Data.Tree as T
+import Data.Tree
 
-data TreeGenerator = TreeGenerator {treeStack :: [T.Tree String]} deriving Show
+data TreeGenerator a = TreeGenerator {treeStack :: [Tree a]} deriving Show
 
-type TreeContext a = StateT TreeGenerator IO a
+type TreeContext a b = StateT (TreeGenerator a) IO b
 
-root = T.Node {T.rootLabel = "root", T.subForest = [] }
-
-initTree = TreeGenerator {treeStack=[root]}
-
-
-tag2tree :: String -> T.Tree String
-tag2tree str = T.Node {T.rootLabel=str, T.subForest = []} 
+initTree :: a -> TreeGenerator a
+initTree str = TreeGenerator {treeStack=[(Node {rootLabel=str,subForest=[]})]}
 
 
-addSubTree :: String -> TreeContext ()
-addSubTree t = do
-	add t
+tag2tree :: a -> Tree a
+tag2tree str = Node {rootLabel=str, subForest = []} 
 
-addLeaf :: String -> TreeContext ()
-addLeaf t = do
-	add t
+insertSubTree :: a -> TreeContext a () -> TreeContext a () 
+insertSubTree str action = do
+	insertNode str
+	action
+	endTree
+
+insertLeaf :: a -> TreeContext a ()
+insertLeaf t = do
+	insertNode t
 	endTree
 
 
-add :: String -> TreeContext ()
-add t = do
+insertNode :: a -> TreeContext a ()
+insertNode t = do
 	state <- get
 	let oldStack = treeStack state
 	let subTree = tag2tree t
@@ -38,15 +36,15 @@ add t = do
 	put (TreeGenerator newStack)
 	return ()
 
-endTree :: TreeContext ()
+endTree :: TreeContext a ()
 endTree = do
 	state <- get
 	let stack = treeStack state
 	if (length stack > 1) then
 		do
 			let (e1:e2:rest) = stack
-			let childList = T.subForest e2
-			let newE2 = e2 {T.subForest=e1:childList}
+			let childList = subForest e2
+			let newE2 = e2 {subForest=e1:childList}
 			let newStack = newE2:rest
 			put (TreeGenerator newStack)
 			return ()
@@ -54,8 +52,8 @@ endTree = do
 		else
 			return ()
 
-process :: TreeContext () -> IO (T.Tree String)
-process action = do
-	(s,TreeGenerator x) <- runStateT (action>>endTree) initTree
+process :: a -> TreeContext a () -> IO (Tree a)
+process str action = do
+	(s,TreeGenerator x) <- runStateT (action>>endTree) (initTree str)
 	return (x!!0)
 
