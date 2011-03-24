@@ -90,7 +90,7 @@ save = do
 
 doTasks :: MyState ()
 doTasks = do
-	liftIO $ putStrLn "Enter command:"
+	liftIO $ putStr "Enter command: " >> hFlush stdout
 	line <- liftIO getLine
 	let (cmd,params) = Command.getCommand line
 	case cmd of
