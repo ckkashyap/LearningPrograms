@@ -9,16 +9,10 @@ import qualified Command as Command
 
 type KeyValueMap = Map.Map String String
 
-data Command = 
-	  New {newDescription :: String, newDueDate :: UTCTime}
-	| ListAll
-	| ListParticular {id :: Int}
-	| UpdateParticular {id :: Int}
-	deriving (Show)
 
 data Task = Task {
 	description :: String,
-	dueDate :: UTCTime,
+	dueDate :: Day,
 	updates :: [Update]
 } deriving (Show,Read)
 
@@ -27,52 +21,45 @@ data Update = Update {
 	date :: Day
 }deriving (Show,Read)
 
-
 type Tasks = [Task]
 
 type MyState a = StateT Tasks IO a
 
 
-decoratedPrint :: String -> IO ()
-decoratedPrint str = do
-	putStrLn ""
-	putStrLn fullLine
-	putStrLn $ prefix ++ message ++ postfix
-	putStrLn fullLine
+utcTimeToDay :: UTCTime -> Day
+utcTimeToDay u = read (take 10 $ show u) :: Day
 
-	where
-		message = take 20 str
-		fullLine = take fullLineLength (repeat '*')
-		prefix = decorLengthStars ++ " "
-		postfix = " " ++ decorLengthStars
-		decorLengthStars = take decorLength (repeat '*')
-		decorLength = 5
-		fullLineLength = messageLength + 2 + (decorLength*2)
-		messageLength = length message
+parseInt :: String -> Int
+parseInt str = let parse = reads str :: [(Int,String)] in
+	case parse of
+		[(i,_)] -> i
+		_ -> 0
 
-prompt :: String -> MyState ()
-prompt str = liftIO $ do
-	putStr str
-	hFlush stdout
-	return ()
+parseDay :: String -> Day -> Day
+parseDay str today = let parse = reads str :: [(Day,String)] in
+	case parse of
+		[(d,_)] -> d
+		_       -> today
+
+lookupMap key map = case (Map.lookup key map) of
+	Just v	-> v
+	_	-> ""
 
 addTask :: (Map.Map String String) -> MyState ()
-addTask p =  do
-	liftIO $ putStrLn "Adding a Task"
-	let (Just desc) = Map.lookup "desc" p
-	let (Just dt) = Map.lookup "due" p
-	let date = dt ++ " 00:00:00.000000 IST"
-	let ((utcTime,_):_) = reads date :: [(UTCTime,String)]
-	liftIO $ putStrLn (show utcTime)
+addTask params =  do
+	ct <- liftIO $ getCurrentTime
+	let today = utcTimeToDay ct
+	let desc = lookupMap "s" params
+	let day = parseDay (lookupMap "o" params) today
+	liftIO $ putStrLn $ desc ++ " is due on " ++ (show day)
 	task <- get
-	let newTask = Task {description = desc, dueDate = utcTime, updates=[]}
+	let newTask = Task {description = desc, dueDate = day, updates=[]}
 	put (newTask:task)
 	return ()
 
 
 listTask :: MyState ()
 listTask = do
-	liftIO $ decoratedPrint "Task list"
 	tasks <- get
 	liftIO $ listTask' 1 tasks
 	return ()
@@ -108,8 +95,8 @@ doTasks = do
 	let (cmd,params) = Command.getCommand line
 	case cmd of
 		"quit"	-> return ()
-		"add"	-> addTask params >> doTasks
-		"list"	-> listTask >> doTasks
+		"a"	-> addTask params >> doTasks
+		"l"	-> listTask >> doTasks
 		_	-> doTasks
 
 
