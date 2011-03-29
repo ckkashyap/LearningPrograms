@@ -11,7 +11,7 @@ sub new{
 	$params{PS}=[
 	"%!",
 	"/Times-Roman findfont",
-	"12 scalefont",
+	"10 scalefont",
 	"setfont",
 	];
 	$params{X}=0;
@@ -42,18 +42,28 @@ sub line{
 }
 
 sub print{
-	my($self,$message,$x,$y,$red,$green,$blue)=@_;
+	my($self,$message,$x,$y,$red,$green,$blue,$angle)=@_;
 	$red=0 unless $red;
 	$green=0 unless $green;
 	$blue=0 unless $blue;
+	$angle=0 unless $angle;
+	push @{$self->{PS}},"gsave";
 	push @{$self->{PS}},"newpath";
 	push @{$self->{PS}},"$x $y moveto";
+	push @{$self->{PS}},"$angle rotate";
+	push @{$self->{PS}},"$red $green $blue setrgbcolor";
 	push @{$self->{PS}},"($message) show";
 	push @{$self->{PS}},"gsave";
-	push @{$self->{PS}},"$red $green $blue setrgbcolor";
 	push @{$self->{PS}},"stroke";
 	push @{$self->{PS}},"grestore";
+	push @{$self->{PS}},"grestore";
 }
+
+sub vprint{
+	my($self,$message,$x,$y,$red,$green,$blue)=@_;
+	$self->print($message,$x,$y,$red,$green,$blue,90);
+}
+
 
 
 sub save{
@@ -65,10 +75,6 @@ sub save{
 		print OUT "\n";
 	}
 }
-
-
-
-
 
 
 1;
