@@ -59,6 +59,24 @@ sub print{
 	push @{$self->{PS}},"grestore";
 }
 
+sub circle{
+	my($self,$x,$y,$radius,$red,$green,$blue)=@_;
+	$red=0 unless $red;
+	$green=0 unless $green;
+	$blue=0 unless $blue;
+	push @{$self->{PS}},"gsave";
+	push @{$self->{PS}},"newpath";
+	push @{$self->{PS}},"$x $y moveto";
+	push @{$self->{PS}},"$red $green $blue setrgbcolor";
+	push @{$self->{PS}},"$x $y $radius 0 360 arc";
+	push @{$self->{PS}},"gsave";
+	push @{$self->{PS}},"stroke";
+	push @{$self->{PS}},"grestore";
+	push @{$self->{PS}},"grestore";
+
+
+}
+
 sub vprint{
 	my($self,$message,$x,$y,$red,$green,$blue)=@_;
 	$self->print($message,$x,$y,$red,$green,$blue,90);
