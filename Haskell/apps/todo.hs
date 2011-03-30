@@ -4,6 +4,8 @@ import Data.Time
 import System.IO
 import Control.Monad.State
 
+import Util
+
 import qualified Data.Map as Map
 import qualified Command as Command
 
@@ -11,9 +13,11 @@ type KeyValueMap = Map.Map String String
 
 
 data Task = Task {
+	taskId :: Int,
 	description :: String,
 	dueDate :: Day,
-	updates :: [Update]
+	updates :: [Update],
+	tags :: [String]
 } deriving (Show,Read)
 
 data Update = Update {
@@ -23,7 +27,14 @@ data Update = Update {
 
 type Tasks = [Task]
 
-type MyState a = StateT Tasks IO a
+
+data TaskState = TaskState {
+	tasks :: [Task],
+	maxId :: Int
+} deriving (Show,Read)
+
+
+type MyState a = StateT TaskState IO a
 
 
 utcTimeToDay :: UTCTime -> Day
@@ -50,41 +61,42 @@ addTask params =  do
 	ct <- liftIO $ getCurrentTime
 	let today = utcTimeToDay ct
 	let desc = lookupMap "s" params
+	let tags = split (lookupMap "t" params) ','
 	let day = parseDay (lookupMap "o" params) today
 	liftIO $ putStrLn $ desc ++ " is due on " ++ (show day)
-	task <- get
-	let newTask = Task {description = desc, dueDate = day, updates=[]}
-	put (newTask:task)
+	TaskState {tasks,maxId } <- get
+	let newTask = Task {taskId = 1, description = desc, dueDate = day, updates=[], tags=tags}
+	put (TaskState {tasks=newTask:tasks,maxId=maxId+1})
 	return ()
 
 
-listTask :: MyState ()
-listTask = do
-	tasks <- get
-	liftIO $ listTask' 1 tasks
-	return ()
-	where
-		listTask' _ [] = return ()
-		listTask' n ((Task {description,dueDate,updates}):ts) = do
-			putStrLn $ (show n) ++ ". "++ description 
-			listTask' (n+1) ts
-
+--listTask :: MyState ()
+--listTask = do
+--	tasks <- get
+--	liftIO $ listTask' 1 tasks
+--	return ()
+--	where
+--		listTask' _ [] = return ()
+--		listTask' n ((Task {description,dueDate,updates}):ts) = do
+--			putStrLn $ (show n) ++ ". "++ description 
+--			listTask' (n+1) ts
+--
 backupFile = "backup.txt"
-
-load :: MyState ()
-load = do
-	handle <- liftIO $ openFile backupFile ReadMode
-	contents <- liftIO $ hGetContents handle
-	let tasks = read contents :: Tasks
-	liftIO $ putStrLn ("Loaded " ++ (show.length $ tasks) ++ " tasks!" )
-	liftIO $ hClose handle
-	put tasks
-	return ()
-
+--
+--load :: MyState ()
+--load = do
+--	handle <- liftIO $ openFile backupFile ReadMode
+--	contents <- liftIO $ hGetContents handle
+--	let tasks = read contents :: Tasks
+--	liftIO $ putStrLn ("Loaded " ++ (show.length $ tasks) ++ " tasks!" )
+--	liftIO $ hClose handle
+--	put tasks
+--	return ()
+--
 save :: MyState ()
 save = do
-	tasks <- get
-	liftIO $ writeFile backupFile (show tasks)
+	taskState <- get
+	liftIO $ writeFile backupFile (show taskState)
 	return ()
 
 
@@ -94,9 +106,11 @@ doTasks = do
 	line <- liftIO getLine
 	let (cmd,params) = Command.getCommand line
 	case cmd of
-		"quit"	-> return ()
+		"q"	-> return ()
 		"a"	-> addTask params >> doTasks
-		"l"	-> listTask >> doTasks
+		--"l"	-> listTask >> doTasks
+		"s"	-> save >> doTasks
+		--"ld"	-> load >> doTasks
 		_	-> doTasks
 
 
@@ -104,8 +118,7 @@ doTasks = do
 main :: IO ()
 main = do
 	--(s, t) <- runStateT doMenu []
-	(s, t) <- runStateT doTasks []
-	putStrLn (show t)
+	(s, t) <- runStateT doTasks (TaskState {tasks=[],maxId=0})
 	return ()
 
 

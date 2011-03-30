@@ -1,4 +1,4 @@
-module Util where
+module Util (split,strip) where
 
 split :: Eq a => [a] -> a -> [[a]]
 split [] _ = []
@@ -13,3 +13,9 @@ fetchToken (x:xs) c
 	| otherwise = (x:word,n+1)
 		where
 			(word,n) = fetchToken xs c
+
+
+strip = removeFromFront.removeFromEnd
+	where
+		removeFromFront = dropWhile (==' ')
+		removeFromEnd = reverse.removeFromFront.reverse
