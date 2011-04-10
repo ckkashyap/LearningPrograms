@@ -23,7 +23,7 @@ history = [
 	workAtVirtusaPega,
 	workAtVirtusaEMC,
 	workAtSeranovaSupport,
-	workAtSeranovaSupport
+	workAtSeranovaSIF
 
 	]
 

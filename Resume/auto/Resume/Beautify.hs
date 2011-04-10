@@ -16,7 +16,8 @@ wrapTag tag str = openTag ++ str ++ closeTag
 		openTag = '<':tag ++ ">"
 		closeTag = '<':'/':tag ++ ">"
 		
-italic str = wrapTag "i" str
+italic = wrapTag "i"
+bold = wrapTag "b"
 
 listify :: Format -> [String] -> [String]
 listify HTML list = ["<ul>"] ++ (map (wrapTag "li") list) ++ ["</ul>"]
@@ -52,7 +53,7 @@ printWork TXT (w:ws)  = (printWork' TXT w) ++ "\n\n" ++ (printWork TXT ws)
 
 
 printWork' HTML (WorkAtCompany company designation start end description) = concat $ intersperse "<br>" [
-		field "Company" company,
+		field "Company" (bold company),
 		field "Designation" designation,
 		field "Duration" (start ++ " - " ++ end),
 		field "Description" description
