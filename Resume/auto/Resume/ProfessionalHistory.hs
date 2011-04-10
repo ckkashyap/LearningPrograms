@@ -32,7 +32,7 @@ workAtYahoo = WorkAtCompany {
 		designation = "Principal Engineer - performance analysis and tuning",
 		start = "May 2010",
 		end = "till date",
-		description = "In this role, I'm currently working on exploring the performance of virtualization technologies such as Xen and OpenVZ. Prior to this, I've used Intel's statistical profiling tools to find performance optimization opportunities in a serving side application. I support the team with perl expertise for automations."
+		description = "In this role, I'm currently working on exploring the performance of virtualization technologies such as Xen and OpenVZ. Prior to this, I've used Intel's statistical profiling tools to find performance optimization opportunities in a serving side application. I support the team with perl expertise for automation."
 	}
 
 workAtIBMMgr = WorkAtCompany {
@@ -108,6 +108,6 @@ workAtSeranovaSIF = WorkAtCompany {
 		designation = "Software Engineer",
 		start = "July 2000",
 		end = "October 2001",
-		description = "Standard Implementation Framework (SIF) is the web contentmanagement utility developed for a fortune 500 American client. This utility was developed using Vignette’s Story-Server. Using the tool a person with no knowledge of HTML could create and update webcontent of the corporate web site. The tool allowed creation of page layouts on the fly. This was achieved using a JAVA applet. All the information about the layout and web contents were stored using XML.  I was a developer in one of the modules. My training period was till December 2000."
+		description = "Standard Implementation Framework (SIF) is the web content management utility developed for a fortune 500 American client. This utility was developed using Vignette’s Story-Server. Using the tool a person with no knowledge of HTML could create and update webcontent of the corporate web site. The tool allowed creation of page layouts on the fly. This was achieved using a JAVA applet. All the information about the layout and web contents were stored using XML.  I was a developer in one of the modules. My training period was till December 2000."
 		
 	}
