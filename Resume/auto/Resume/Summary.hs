@@ -17,4 +17,4 @@ summary Manager format = processSummary format $ [
 	]
 
 
-processSummary format body = concat (map (makeParagraphs format)  body)
+processSummary format body = concat (map (makeParagraphs format)  (map insertAnchorLinks body))

@@ -4,6 +4,7 @@ import Resume.Type
 import Resume.ProfessionalHistory
 
 import Data.List
+import Text.Regex
 
 
 makeParagraphs :: Format -> String -> String
@@ -43,6 +44,10 @@ title TXT name email education = titleText
 			email,
 			education
 			]
+
+insertAnchorLinks str = subRegex linkReg str "<a href=\"\\1\">\\1</a>"
+	where
+		linkReg = mkRegex "(https?://[a-zA-Z0-9./]+)"
 
 
 
