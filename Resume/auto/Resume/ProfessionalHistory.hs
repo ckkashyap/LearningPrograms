@@ -91,7 +91,7 @@ workAtVirtusaEMC = WorkAtCompany {
 		designation = "Software Engineer",
 		start = "March 2002",
 		end = "February 2003",
-		description = "The goal of the EMC EDM Linux Port project is to port EDM (EMC’s Data Manager)from Solaris to Linux. EDM contains 2.5 million lines of C and C++ programs. The UI part of EDMis in Java. The project was carried out in multiple phases. The first phase involved replacing the Solaris specific calls in the application source base with the POSIX equivalent. The second phase involved compiling the whole thing on Linux. The third phase involved executing the application and debugging on both the platforms."
+		description = "The goal of the EMC EDM Linux Port project was to port EDM (EMC's Data Manager)from Solaris to Linux. EDM contains 2.5 million lines of C and C++ programs. The UI part of EDM was in Java. The project was carried out in multiple phases. The first phase involved replacing the Solaris specific calls in the application source base with the POSIX equivalent. The second phase involved compiling the whole thing on Linux. The third phase involved executing the application and debugging on both the platforms."
 	}
 
 

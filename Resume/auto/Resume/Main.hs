@@ -9,7 +9,7 @@ import Resume.Type
 import Resume.ProfessionalHistory
 
 
-generateF t HTML = "<html><body><font face=\"courier\">"
+generateF t HTML = "<html><body><font face=\"arial\">"
 	++ title HTML "C K Kashyap" "ckkashyap@gmail.com" "BITS Pilani 1996 - 2000"
 	++ subHeading HTML "Summary"
 	++ (summary t HTML)
