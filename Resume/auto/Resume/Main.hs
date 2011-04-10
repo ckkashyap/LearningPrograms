@@ -6,15 +6,18 @@ import Resume.Summary
 import Resume.Highlights
 import Resume.Beautify
 import Resume.Type
+import Resume.ProfessionalHistory
 
 
 generateF t HTML = do
-	putStrLn "<html><body><font face=\"arial\">"
+	putStrLn "<html><body><font face=\"courier\">"
 	putStrLn $ title HTML "C K Kashyap" "ckkashyap@gmail.com" "BITS Pilani 1996 - 2000"
 	putStrLn $ subHeading HTML "Summary"
 	putStrLn (summary t HTML)
 	putStrLn $ subHeading HTML "Highlights"
 	putStrLn (highlights t HTML)
+	putStrLn $ subHeading HTML "Work experience details"
+	putStrLn $ printWork HTML history
 	putStrLn "</body></html>"
 
 generateF t TXT = do
@@ -27,7 +30,7 @@ generateF t TXT = do
 
 
 generate t = do
-	generateF t TXT
+	generateF t HTML
 
 
 

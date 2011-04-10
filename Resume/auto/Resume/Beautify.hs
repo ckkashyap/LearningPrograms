@@ -1,6 +1,7 @@
 module Resume.Beautify where
 
 import Resume.Type
+import Resume.ProfessionalHistory
 
 import Data.List
 
@@ -18,7 +19,7 @@ wrapTag tag str = openTag ++ str ++ closeTag
 italic str = wrapTag "i" str
 
 listify :: Format -> [String] -> [String]
-listify HTML list = ["<ul>"] ++ (map (wrapTag "li") list) ++ ["<ul>"]
+listify HTML list = ["<ul>"] ++ (map (wrapTag "li") list) ++ ["</ul>"]
 listify TXT list = map ((++"\n").("\t- "++)) list
 
 
@@ -41,3 +42,13 @@ title TXT name email education = titleText
 			email,
 			education
 			]
+
+
+
+breakLine HTML n []  = []
+breakLine HTML n str = (take n str) ++ "<br>" ++ breakLine HTML n (drop n str)
+
+
+printWork  :: Format -> WorkHistory -> String
+printWork HTML [] = [] 
+printWork HTML ((WorkAtCompany company designation start end description):ws) =  company ++ "<br>" ++ (printWork HTML ws)
