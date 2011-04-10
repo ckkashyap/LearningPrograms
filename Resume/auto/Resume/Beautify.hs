@@ -45,10 +45,26 @@ title TXT name email education = titleText
 
 
 
-breakLine HTML n []  = []
-breakLine HTML n str = (take n str) ++ "<br>" ++ breakLine HTML n (drop n str)
-
-
 printWork  :: Format -> WorkHistory -> String
-printWork HTML [] = [] 
-printWork HTML ((WorkAtCompany company designation start end description):ws) =  company ++ "<br>" ++ (printWork HTML ws)
+printWork _ [] = [] 
+printWork HTML (w:ws) =  (printWork' HTML w) ++ "<br><br>" ++ (printWork HTML ws)
+printWork TXT (w:ws)  = (printWork' TXT w) ++ "\n\n" ++ (printWork TXT ws)
+
+
+printWork' HTML (WorkAtCompany company designation start end description) = concat $ intersperse "<br>" [
+		field "Company" company,
+		field "Designation" designation,
+		field "Duration" (start ++ " - " ++ end),
+		field "Description" description
+	]
+	where
+		field name value = (italic name) ++ ": " ++ value 
+
+printWork' TXT (WorkAtCompany company designation start end description) = concat $ intersperse "\n" [
+		field "Company" company,
+		field "Designation" designation,
+		field "Duration" (start ++ " - " ++ end),
+		field "Description" description
+	]
+	where
+		field name value = name ++ ": " ++ value 

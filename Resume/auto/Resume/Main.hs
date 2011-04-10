@@ -26,11 +26,13 @@ generateF t TXT = do
 	putStrLn (summary t TXT)
 	putStrLn $ subHeading TXT "Highlights"
 	putStrLn (highlights t TXT)
+	putStrLn $ subHeading TXT "Work experience details"
+	putStrLn $ printWork TXT history
 
 
 
 generate t = do
-	generateF t HTML
+	generateF t TXT
 
 
 
