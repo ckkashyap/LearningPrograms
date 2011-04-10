@@ -20,8 +20,8 @@ generateF t HTML = "<html><body><font face=\"courier\">"
 	++ "</body></html>"
 
 generateF t TXT = title TXT "C K Kashyap" "ckkashyap@gmail.com" "BITS Pilani 1996 - 2000"
-	++ "\n" ++  subHeading TXT "Summary\n"
-	++ "\n" ++  (summary t TXT)
+	++ "\n" ++  subHeading TXT "\nSummary"
+	++ (summary t TXT)
 	++ "\n" ++  subHeading TXT "Highlights"
 	++ "\n" ++  (highlights t TXT)
 	++ "\n" ++  subHeading TXT "Work experience details"

@@ -1,9 +1,8 @@
 C K Kashyap
 ckkashyap@gmail.com
 BITS Pilani 1996 - 2000
+
 Summary
-
-
 
 	I have over 10 years of industrial experience in developing software ranging from device drivers to web applications. My experience includes 3 years of people management at IBM India Software Labs and driving multiple releases via a geographically distributed cross functional team. I graduated from BITS Pilani in 2000 with MMS - Master of Management Studies. MMS used to be an integrated masters degree which was equivalent of BE + MBA.  While at BITS, I was part of the robotics lab and I did a semester long internship at Center for Artificial Intelligence and Robotics, Bangalore.
 
