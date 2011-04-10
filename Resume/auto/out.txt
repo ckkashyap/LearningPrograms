@@ -28,7 +28,7 @@ Work experience details
 Company: Yahoo
 Designation: Principal Engineer - performance analysis and tuning
 Duration: May 2010 - till date
-Description: In this role, I'm currently working on exploring the performance of virtualization technologies such as Xen and OpenVZ. Prior to this, I've used Intel's statistical profiling tools to find performance optimization opportunities in a serving side application. I support the team with perl expertise for automations.
+Description: In this role, I'm currently working on exploring the performance of virtualization technologies such as Xen and OpenVZ. Prior to this, I've used Intel's statistical profiling tools to find performance optimization opportunities in a serving side application. I support the team with perl expertise for automation.
 
 Company: IBM India Software Labs
 Designation: Engineering Manager
@@ -73,5 +73,5 @@ Description: This project involved doing night shifts and waiting for client cal
 Company: Seranova
 Designation: Software Engineer
 Duration: July 2000 - October 2001
-Description: Standard Implementation Framework (SIF) is the web contentmanagement utility developed for a fortune 500 American client. This utility was developed using Vignette’s Story-Server. Using the tool a person with no knowledge of HTML could create and update webcontent of the corporate web site. The tool allowed creation of page layouts on the fly. This was achieved using a JAVA applet. All the information about the layout and web contents were stored using XML.  I was a developer in one of the modules. My training period was till December 2000.
+Description: Standard Implementation Framework (SIF) is the web content management utility developed for a fortune 500 American client. This utility was developed using Vignette's Story-Server. Using the tool a person with no knowledge of HTML could create and update webcontent of the corporate web site. The tool allowed creation of page layouts on the fly. This was achieved using a JAVA applet. All the information about the layout and web contents were stored using XML.  I was a developer in one of the modules. My training period was till December 2000.
 
