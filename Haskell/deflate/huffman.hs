@@ -6,11 +6,14 @@ import Data.List
 type CodeLength = Int
 type CodeLengths = [CodeLength]
 type Count = Int
+type Code = Int
+type CodeLengthCounts = Array.Array CodeLength Count
 
 input :: CodeLengths
-input = [2,1,3,3]
+--input = [2,1,3,3]
+input = [3, 3, 3, 3, 3, 2, 4, 4]
 
-bl_count :: CodeLengths -> Array.Array CodeLength Count
+bl_count :: CodeLengths -> CodeLengthCounts
 bl_count l = bl_count' l arr
 	where
 		arr = Array.array (0,max) [(i,0) | i <- [0..max]]
@@ -21,12 +24,33 @@ bl_count l = bl_count' l arr
 				na = a Array.// [(x,v+1)]
 				v = a Array.! x
 
+
+
 ------------------------------
 
-minCode' bc 0 = 0 
-minCode' bc i = ((minCode' bc (i-1) + bitCount (i-1)) `shiftL` 1)
+minCodeValForLength :: CodeLengthCounts -> CodeLength -> Code
+minCodeValForLength _ 0 = 0
+minCodeValForLength clc cl= (v1 + v2) `shiftL` 1
 	where
-		bitCount n = bc  Array.! n
-			
-minCode = minCode' (bl_count input)
+		v1 = minCodeValForLength clc prevCl
+		v2 = clc Array.! prevCl
+		prevCl = cl - 1
+	
 
+------------------------------
+
+
+codes :: CodeLengthCounts -> CodeLength -> [Code]
+codes clc cl = codes' cl cnt min
+	where
+		min = minCodeValForLength (bl_count input) cl
+		cnt = clc Array.! cl
+		codes' n 0 _ = []
+		codes' n cnt min = min:(codes' n (cnt-1) (min+1))
+		
+
+
+testCodes :: CodeLengths -> [Code]
+testCodes input = concat $ map (codes clc) (nub input)
+	where
+		clc = bl_count input
