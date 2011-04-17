@@ -66,7 +66,7 @@ workAtSun = WorkAtCompany {
 		designation = "Staff software engineer",
 		start = "September 2004",
 		end = "March 2005",
-		description = "As a part of this team I was responsible to fix bugs reported on the Sun’s Webserver. Also, I was in charge of setting automated GAT(General Acceptance Test). Automated GAT involved writing Perl script to continuously check out the source, do a build and run the test suite. Since the repository was in a remote location, I had implemented a kind of ”double buffer” to speed up the process - I used to start the checkout of the source in a parallel location when the test was running on the checked out location. During the course of work here, I had opportunity to understand PKI."
+		description = "As a part of this team I was responsible to fix bugs reported on the Sun One Webserver. Also, I was in charge of setting automated GAT(General Acceptance Test). Automated GAT involved writing Perl script to continuously check out the source, do a build and run the test suite. Since the repository was in a remote location, I had implemented a kind of a double buffer to speed up the process - I used to start the checkout of the source in a parallel location when the test was running on the checked out location. During the course of work here, I had opportunity to understand PKI."
 	}
 
 workAtInsilica = WorkAtCompany {
@@ -83,7 +83,7 @@ workAtVirtusaPega = WorkAtCompany {
 		designation = "Software Engineer",
 		start = "March 2003",
 		end = "October 2003",
-		description = "This project involved writing an expression compiler for the Pega system’s rules engine. ANTLR (lex/yacc equivalent in the java world) was used for this purpose. Developing the front end of this project involved extensive use of java-script to dynamically make HTTP connections to the server and parsing the retrieved XMLs."
+		description = "This project involved writing an expression compiler for the Pega systems rules engine. ANTLR (lex/yacc equivalent in the java world) was used for this purpose. Developing the front end of this project involved extensive use of java-script to dynamically make HTTP connections to the server and parsing the retrieved XMLs."
 	}
 
 workAtVirtusaEMC = WorkAtCompany {
