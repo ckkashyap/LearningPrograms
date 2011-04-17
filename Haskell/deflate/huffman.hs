@@ -20,10 +20,6 @@ bl_count l = bl_count' l arr
 			where
 				na = a Array.// [(x,v+1)]
 				v = a Array.! x
-		
-
-
-
 
 ------------------------------
 
