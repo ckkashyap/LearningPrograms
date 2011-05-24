@@ -29,19 +29,21 @@ subHeading :: Format -> String -> String
 subHeading HTML str = wrapTag "h3" str
 subHeading TXT str = str ++ "\n"
 
-title HTML name email education = wrapTag "center" $ titleText
+title HTML name email education mobile = wrapTag "center" $ titleText
 	where
 		titleText = concat $ intersperse "<br>" [
 			wrapTag "b" name,
 			italic $ "<a href=\"mailto:" ++ email ++ "\">" ++ email ++ "</a>",
+			("+91"++mobile),
 			italic education
 			]
 
-title TXT name email education = titleText
+title TXT name email education mobile = titleText
 	where
 		titleText = concat $ intersperse "\n" [
 			name,
 			email,
+			("+91"++mobile),
 			education
 			]
 

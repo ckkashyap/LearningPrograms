@@ -10,7 +10,7 @@ import Resume.ProfessionalHistory
 
 
 generateF t HTML = "<html><body><font face=\"arial\">"
-	++ title HTML "C K Kashyap" "ckkashyap@gmail.com" "BITS Pilani 1996 - 2000"
+	++ title HTML "C K Kashyap" "ckkashyap@gmail.com" "BITS Pilani 1996 - 2000" "9448466112"
 	++ subHeading HTML "Summary"
 	++ (summary t HTML)
 	++ subHeading HTML "Highlights"
@@ -19,7 +19,7 @@ generateF t HTML = "<html><body><font face=\"arial\">"
 	++ printWork HTML history
 	++ "</body></html>"
 
-generateF t TXT = title TXT "C K Kashyap" "ckkashyap@gmail.com" "BITS Pilani 1996 - 2000"
+generateF t TXT = title TXT "C K Kashyap" "ckkashyap@gmail.com" "BITS Pilani 1996 - 2000" "9448466112"
 	++ "\n" ++  subHeading TXT "\nSummary"
 	++ (summary t TXT)
 	++ "\n" ++  subHeading TXT "Highlights"
