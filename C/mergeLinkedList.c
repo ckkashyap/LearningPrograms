@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct _Node {
   int i;
@@ -53,21 +54,61 @@ Node *merge(Node *l1, Node *l2) {
   }
 }
 
+Node *mergeIter(Node *l1, Node *l2) {
+  Node *ret,*temp;
+  if(!l1 && !l2) {
+    return NULL;
+  }
+  if(!l1) {
+    return l2;
+  }
+  if (!l2) {
+    return l1;
+  }
+
+  if(l1->i < l2->i) {
+    ret=l1;
+    l1=l1->next;
+  } else {
+    ret=l2;
+    l2=l2->next;
+  }
+
+  temp=ret;
+    
+  while( l1 && l2) {
+    printf("%d %d\n",l1->i,l2->i);
+    if(l1->i < l2->i) {
+      temp->next=l1;
+      l1=l1->next;
+    } else {
+      temp->next=l2;
+      l2=l2->next;
+    }
+    temp=temp->next;
+
+  }
+  printf("----\n");
+  return ret;
+}
+
+
 int main(int argc, char *argv[]) {
   Node *list1,*list2,*l3;
 
   list1=newNode(1);
   insert(list1,2);
-  insert(list1,3);
+  insert(list1,7);
 
   list2=newNode(4);
-  insert(list2,5);
   insert(list2,6);
+  insert(list2,8);
 
   print(list1);
   print(list2);
   
-  l3=merge(list1,list2);
+  //  l3=merge(list1,list2);
+    l3=mergeIter(list1,list2);
   print(l3);
 }
 
