@@ -13,6 +13,10 @@ Node* newNode(int i) {
   return node;
 }
 
+  
+
+
+
 void insert(Node *head, int i) {
   Node *node;
   while(head->next) {
@@ -92,9 +96,24 @@ Node *mergeIter(Node *l1, Node *l2) {
   return ret;
 }
 
+Node *reverse(Node *input, Node *output){
+  Node *temp;
+  if (input==NULL) {
+    return output;
+  }
+
+  temp=input->next;
+  input->next=output;
+
+  return reverse(temp,input);
+}
+
+  
+
+
 
 int main(int argc, char *argv[]) {
-  Node *list1,*list2,*l3;
+  Node *list1,*list2,*l3,*l4;
 
   list1=newNode(1);
   insert(list1,2);
@@ -104,12 +123,14 @@ int main(int argc, char *argv[]) {
   insert(list2,6);
   insert(list2,8);
 
-  print(list1);
-  print(list2);
+   print(list1);
+   print(list2);
   
-  //  l3=merge(list1,list2);
-    l3=mergeIter(list1,list2);
-  print(l3);
+    l3=merge(list1,list2);
+    // l3=mergeIter(list1,list2);
+    l4=reverse(l3,NULL);
+    
+    print(l4);
 }
 
 
