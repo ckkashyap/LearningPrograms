@@ -13,8 +13,10 @@ Node* newNode(int i) {
   return node;
 }
 
-  
+Node *reverse(Node *input, Node *output);  
 
+int reverseCall=0;
+int appendCall=0;
 
 
 void insert(Node *head, int i) {
@@ -58,6 +60,48 @@ Node *merge(Node *l1, Node *l2) {
   }
 }
 
+Node *append(Node *l1, Node *l2) 
+{
+  Node *ret=l1;
+  appendCall++;
+  if(!l1)return l2;
+  if(!l2)return l1;
+  while(l1->next) {
+    l1=l1->next;
+  }
+  l1->next=l2;
+  return ret;
+}
+  
+
+Node *_mergeTailCall(Node *l1, Node *l2, Node *acc) {
+  Node *temp;
+  if(!l1 && !l2) {
+    return NULL;
+  }
+  if (l2==NULL){
+    return append(l1,acc);
+  }
+  if (l1==NULL){
+    return append(l2,acc);
+  }
+  if (l1->i < l2->i) {
+    temp=l1;
+    l1=l1->next;
+    temp->next=acc;
+    return _mergeTailCall(l1, l2, temp);
+  } else {
+    temp=l2;
+    l2=l2->next;
+    temp->next=acc;
+    return _mergeTailCall(l1, l2, temp);
+  }
+}
+
+Node *mergeTailCall(Node *l1, Node *l2) {
+  return (reverse (_mergeTailCall(l1,l2,NULL),NULL));
+}
+
 Node *mergeIter(Node *l1, Node *l2) {
   Node *ret,*temp;
   if(!l1 && !l2) {
@@ -96,8 +140,12 @@ Node *mergeIter(Node *l1, Node *l2) {
   return ret;
 }
 
+
 Node *reverse(Node *input, Node *output){
   Node *temp;
+
+  reverseCall++;
+
   if (input==NULL) {
     return output;
   }
@@ -114,23 +162,31 @@ Node *reverse(Node *input, Node *output){
 
 int main(int argc, char *argv[]) {
   Node *list1,*list2,*l3,*l4;
-
-  list1=newNode(1);
-  insert(list1,2);
-  insert(list1,7);
-
-  list2=newNode(4);
-  insert(list2,6);
-  insert(list2,8);
-
-   print(list1);
-   print(list2);
+  int start=1,i,N;
   
-    l3=merge(list1,list2);
-    // l3=mergeIter(list1,list2);
-    l4=reverse(l3,NULL);
+
+  N=atoi(argv[1]);
+  list1=newNode(start);
+  for (i=start+2;i<N;i+=2){
+    insert(list1,i);
+  }
+
+  list2=newNode(start+1);
+  for (i=start+3;i<N;i+=2){
+    insert(list2,i);
+  }
+
+  if(N<20) {print(list1);
+    print(list2);}
+
+
+  //l3=merge(list1,list2);
+      l3=mergeTailCall(list1,list2);
     
-    print(l4);
+  if(N<20) print(l3);
+  printf("Reverse called %d times and append called %d times",
+	 reverseCall, appendCall);
+
 }
 
 
