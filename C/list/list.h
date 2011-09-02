@@ -10,5 +10,6 @@ Node* newNode(int);
 void insert(Node *, int);
 void print(Node *);
 Node *reverse(Node *);
+Node *mergeTCO(Node *, Node *);
 
 #endif

@@ -14,7 +14,7 @@ Node *getList(int start,int count,int step) {
     
 
 int main(int argc, char *argv[]) {
-  Node *l1,*l2;
+  Node *l1,*l2,*l3;
   int N;
   
   N=atoi(argv[1]);
@@ -25,6 +25,8 @@ int main(int argc, char *argv[]) {
     print(l1);
     print(l2);
   }
+
+  print(mergeTCO(l1,l2));
 
 }
 
