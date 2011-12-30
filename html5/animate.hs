@@ -28,10 +28,6 @@ data Position = Position {
 
 type MyState a = State [Position] a
 
-move :: MyState ()
-move = do
-     p <- get
-     return ()
 
 
 angle2radians :: Angle -> Radian
@@ -84,14 +80,14 @@ toSegments (Position {
                      p3  = fixup $ applyRotations ((hx+(bodySize/2)), hy - bodySize, hz) sx sy sz
 
                      p4  = fixup $ applyRotations (hx,hy+upperLegSize,hz) lulx luly lulz
-                     p5  = fixup $ applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) lulx luly (lulz + lk)
+                     p5  = fixup $ applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) (lulx + lk) luly lulz
                      p6  = fixup $ applyRotations (hx,hy+upperLegSize,hz) rulx ruly rulz
-                     p7  = fixup $ applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) rulx ruly (rulz + rk)
+                     p7  = fixup $ applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) (rulx + rk) ruly rulz
 
                      p8  = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize , hz)) luax luay luaz
-                     p9  = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) luax luay (luaz + le)
+                     p9  = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) (luax + le) luay luaz
                      p10 = fixup $ applyRotations (((hx+(bodySize/2)), hy - bodySize + upperArmSize , hz)) ruax ruay ruaz
-                     p11 = fixup $ applyRotations (((hx+(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) ruax ruay (ruaz + re)
+                     p11 = fixup $ applyRotations (((hx+(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) (ruax + re) ruay ruaz
         
                      applyRotations p xAngle yAngle zAngle = (rotate (rotate (rotate p xAngle X) yAngle Y) zAngle Z)
 
@@ -118,10 +114,6 @@ convertSegmentsTo2D = foldr (\(p1,p2) rest -> (mapPointOnScreen p1, mapPointOnSc
 test = toSegments initPosition
 test1 = convertSegmentsTo2D test
 
-
---segment2scrpt :: [Segment2D] -> String
----segment2scrpt 
-
 segments2script :: [Segment2D] -> String
 segments2script [] = ""
 segments2script (((x1,y1),(x2,y2)):ss) =  "context.moveTo(" ++ (show x1) ++ ", " ++ (show y1) ++ ");\n" ++ "context.lineTo(" ++ (show x2) ++ ", " ++ (show y2) ++ ");\n" ++ segments2script ss
@@ -143,9 +135,9 @@ initPosition :: Position
 initPosition = Position {
                 shoulder = (0,0,0),
                 neck = (0,0,0),
-                leftUpperLeg = (0,0,30),
+                leftUpperLeg = (10,0,30),
                 rightUpperLeg = (0, 0, 0),
-                leftKnee = -10,
+                leftKnee = -30,
                 rightKnee = 0,
                 leftUpperArm = (0,0,0),
                 rightUpperArm = (0,0,0),
@@ -154,12 +146,52 @@ initPosition = Position {
                 hip = (0,0,50)
              }
 
-getPositionList :: MyState Position -> [Position]
+getPositionList :: MyState () -> [Position]
 getPositionList s = reverse ps
                 where
                         (a,ps) = runState s [initPosition]
 
           
 
+moveShoulderRight :: MyState ()
+moveShoulderRight = do
+     (p@(Position {shoulder = (x,y,z)}):ps) <- get
+     let n = p { shoulder = (x,y,z+10)}
+     put (n:p:ps)
+     return ()
+
+
+
+moveShoulderLeft :: MyState ()
+moveShoulderLeft = do
+     (p@(Position {shoulder = (x,y,z)}):ps) <- get
+     let n = p { shoulder = (x,y,z-10)}
+     put (n:p:ps)
+     return ()
+
+
+
+dance :: MyState ()
+dance = do
+      --moveShoulderRight
+      --moveShoulderRight
+      --moveShoulderLeft
+      --moveShoulderLeft
+      return ()
+
+
+getJS :: MyState () -> String
+getJS steps = "var actionList = [\n" ++ (foldr g [] (map f ps)) ++ "\n]\n"
+      where
+        f = segments2script . convertSegmentsTo2D . toSegments
+        ps = getPositionList steps
+        g scr [] = "function (context) {\n" ++ scr ++ "\n}\n"
+        g scr rest = "function (context) {\n" ++ scr ++ "\n},\n" ++ rest
+      
+
+
+
 main = do
-     putStrLn (segments2script test1)
+  putStrLn (getJS dance)
+  writeFile "actionList.js" (getJS dance)
+  return ()
