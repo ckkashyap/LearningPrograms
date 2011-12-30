@@ -90,8 +90,8 @@ toSegments (Position {
 
                      p8  = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize , hz)) luax luay luaz
                      p9  = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) luax luay (luaz + le)
-                     p10 = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize , hz)) ruax ruay ruaz
-                     p11 = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) ruax ruay (ruaz + re)
+                     p10 = fixup $ applyRotations (((hx+(bodySize/2)), hy - bodySize + upperArmSize , hz)) ruax ruay ruaz
+                     p11 = fixup $ applyRotations (((hx+(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) ruax ruay (ruaz + re)
         
                      applyRotations p xAngle yAngle zAngle = (rotate (rotate (rotate p xAngle X) yAngle Y) zAngle Z)
 
@@ -108,7 +108,7 @@ toSegments (Position {
 
 mapPointOnScreen :: Point -> (Int,Int)
 mapPointOnScreen (x,y,z) = if z > 0 then
-                              (round (zoom*x/z), round (zoom*y/z))
+                              (300 + (round (zoom*x/z)), 300 + (round (zoom*y/z)))
                            else
                                 (0,0)
 
@@ -122,8 +122,10 @@ test1 = convertSegmentsTo2D test
 --segment2scrpt :: [Segment2D] -> String
 ---segment2scrpt 
 
---segments2script :: [Segment2D] -> String
---segments2script xs = 
+segments2script :: [Segment2D] -> String
+segments2script [] = ""
+segments2script (((x1,y1),(x2,y2)):ss) =  "context.moveTo(" ++ (show x1) ++ ", " ++ (show y1) ++ ");\n" ++ "context.lineTo(" ++ (show x2) ++ ", " ++ (show y2) ++ ");\n" ++ segments2script ss
+
 
 
 headSize = 30
@@ -141,9 +143,9 @@ initPosition :: Position
 initPosition = Position {
                 shoulder = (0,0,0),
                 neck = (0,0,0),
-                leftUpperLeg = (0,0,0),
+                leftUpperLeg = (0,0,30),
                 rightUpperLeg = (0, 0, 0),
-                leftKnee = 0,
+                leftKnee = -10,
                 rightKnee = 0,
                 leftUpperArm = (0,0,0),
                 rightUpperArm = (0,0,0),
@@ -158,8 +160,6 @@ getPositionList s = reverse ps
                         (a,ps) = runState s [initPosition]
 
           
---
---
---
---onList animation
---
+
+main = do
+     putStrLn (segments2script test1)
