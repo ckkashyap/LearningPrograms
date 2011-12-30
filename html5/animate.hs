@@ -173,10 +173,14 @@ moveShoulderLeft = do
 
 dance :: MyState ()
 dance = do
-      --moveShoulderRight
-      --moveShoulderRight
-      --moveShoulderLeft
-      --moveShoulderLeft
+      moveShoulderRight
+      moveShoulderRight
+      moveShoulderLeft
+      moveShoulderLeft
+      moveShoulderLeft
+      moveShoulderLeft
+      moveShoulderRight
+      moveShoulderRight
       return ()
 
 

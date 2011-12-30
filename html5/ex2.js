@@ -13,12 +13,13 @@ function canvasApp() {
 	    return;
 	}
 
-	setInterval(animator, 10);
+	setInterval(animator, 100);
     }
 
     var ctr=0;
     function animator(){
-	theContext.clearRect(0,0,600,600);
+	theContext.clearRect(0,0,500,500);
+	theCanvas.width=theCanvas.width;
 	actionList[ctr](theContext);
 	theContext.stroke();
 	ctr++;
