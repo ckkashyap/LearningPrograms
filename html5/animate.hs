@@ -9,6 +9,7 @@ data Axis = X|Y|Z
 type Angle = Double
 type Radian = Double
 type Segment = (Point,Point)
+type Segment2D = ((Int,Int),(Int,Int))
 
 data Position = Position {
                 shoulder :: (Angle,Angle,Angle),
@@ -45,7 +46,7 @@ rotate (x,y,z) angle X = (x',y',z')
        where
         x' = x
         y' = (y * cos rads) - (z * sin rads)
-        z' = (y * sin rads) - (z * cos rads)
+        z' = (y * sin rads) + (z * cos rads)
         rads = angle2radians angle
 rotate (x,y,z) angle Y = (x',y',z')
        where
@@ -78,53 +79,77 @@ toSegments (Position {
                })
                = [(p1,p2), (p2,p3), (p3,p1), (p1,p4), (p4,p5), (p1,p6), (p6,p7), (p2,p8), (p8,p9), (p3,p10), (p10,p11)]
                where 
-                     p1 = (hx,hy,hz)
-                     p2 = applyRotations ((hx-(bodySize/2)), hy - bodySize, hz) sx sy sz
-                     p3 = applyRotations ((hx+(bodySize/2)), hy - bodySize, hz) sx sy sz
+                     p1  = fixup (hx,hy,hz)
+                     p2  = fixup $ applyRotations ((hx-(bodySize/2)), hy - bodySize, hz) sx sy sz
+                     p3  = fixup $ applyRotations ((hx+(bodySize/2)), hy - bodySize, hz) sx sy sz
 
-                     p4 = applyRotations (hx,hy+upperLegSize,hz) lulx (270-luly) lulz
-                     p5 = applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) lulx (270 - luly) (lulz + lk)
-                     p6 = applyRotations (hx,hy+upperLegSize,hz) rulx (270 + ruly) rulz
-                     p7 = applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) rulx (270 + ruly) (rulz + rk)
+                     p4  = fixup $ applyRotations (hx,hy+upperLegSize,hz) lulx luly lulz
+                     p5  = fixup $ applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) lulx luly (lulz + lk)
+                     p6  = fixup $ applyRotations (hx,hy+upperLegSize,hz) rulx ruly rulz
+                     p7  = fixup $ applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) rulx ruly (rulz + rk)
 
-                     p8 = applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize , hz)) luax (270 - luay) luaz
-                     p9 = applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) luax (270 - luay) (luaz + le)
-                     p10 = applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize , hz)) ruax (270 - ruay) ruaz
-                     p11 = applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) ruax (270 - ruay) (ruaz + re)
+                     p8  = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize , hz)) luax luay luaz
+                     p9  = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) luax luay (luaz + le)
+                     p10 = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize , hz)) ruax ruay ruaz
+                     p11 = fixup $ applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) ruax ruay (ruaz + re)
         
                      applyRotations p xAngle yAngle zAngle = (rotate (rotate (rotate p xAngle X) yAngle Y) zAngle Z)
 
+                     fixup (x1,y1,z1) = (x1,y1 + (yOffset p5' p7'), z1)
+                           where
+                                p5' = applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) lulx luly (lulz + lk)
+                                p7' = applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) rulx ruly (rulz + rk)
+
+                     yOffset (x1,y1,z1) (x2,y2,z2) = if (y1 < y2) then adjust y1 else adjust y2
+                             where
+                                adjust yy = if yy < 0 then -yy else yy
 
 
 
+mapPointOnScreen :: Point -> (Int,Int)
+mapPointOnScreen (x,y,z) = if z > 0 then
+                              (round (zoom*x/z), round (zoom*y/z))
+                           else
+                                (0,0)
+
+convertSegmentsTo2D :: [Segment] -> [Segment2D]
+convertSegmentsTo2D = foldr (\(p1,p2) rest -> (mapPointOnScreen p1, mapPointOnScreen p2):rest) []
+
+test = toSegments initPosition
+test1 = convertSegmentsTo2D test
 
 
-positionToJavaScriptFunction :: Position -> String
-positionToJavaScriptFunction (Position {shoulder=(x,y,z), neck, leftUpperLeg, rightUpperLeg, leftKnee, rightKnee, leftUpperArm, rightUpperArm, leftElbow, rightElbow}) = ""
+--segment2scrpt :: [Segment2D] -> String
+---segment2scrpt 
+
+--segments2script :: [Segment2D] -> String
+--segments2script xs = 
 
 
-headSize = 3
-bodySize = 5
-upperArmSize = 2
-foreArmSize = 3
-upperLegSize = 3
-lowerLegSize = 5
+headSize = 30
+bodySize = 50
+upperArmSize = 20
+foreArmSize = 30
+upperLegSize = 30
+lowerLegSize = 50
+
+zoom = 50
 
 groundY = 0
 
 initPosition :: Position
 initPosition = Position {
-                shoulder = (90,0,90),
-                neck = (90,0,90),
-                leftUpperLeg = (225,0,90),
-                rightUpperLeg = (315, 0, 90),
-                leftKnee = 85,
-                rightKnee = 85,
-                leftUpperArm = (225,0,90),
-                rightUpperArm = (315,0,90),
-                leftElbow = 85,
-                rightElbow = 85,
-                hip = (0,0,0)
+                shoulder = (0,0,0),
+                neck = (0,0,0),
+                leftUpperLeg = (0,0,0),
+                rightUpperLeg = (0, 0, 0),
+                leftKnee = 0,
+                rightKnee = 0,
+                leftUpperArm = (0,0,0),
+                rightUpperArm = (0,0,0),
+                leftElbow = 0,
+                rightElbow = 0,
+                hip = (0,0,50)
              }
 
 getPositionList :: MyState Position -> [Position]
