@@ -70,14 +70,17 @@ dance = do
 --      dance' 10 (moveLeftHand >>  moveRightHand >> moveShoulderLeft >> moveLeftKneeUp)
 --      dance' 20 (moveLeftHand' >> moveRightHand' >> moveShoulderRight >> moveLeftKneeDown)
 --      dance' 10 (moveLeftHand >>  moveRightHand >> moveShoulderLeft >> moveLeftKneeUp)
-      moveShoulderLeft
-      dance' 360 ( moveLeftKneeUp)
-      moveShoulderLeft
-      dance' 360 ( moveLeftKneeUp)
-      moveShoulderLeft
-      dance' 360 ( moveLeftKneeUp)
---      dance' 180 ( moveLeftKneeDown)
+--      moveShoulderLeft
+--      dance' 360 ( moveLeftKneeUp)
+--      moveShoulderLeft
+--      dance' 360 ( moveLeftKneeUp)
+--      moveShoulderLeft
+--      dance' 360 ( moveLeftKneeUp)
+----      dance' 180 ( moveLeftKneeDown)
 --      dance' 90 ( moveLeftKneeUp)
+        spreadLeg
+        dance' 18 moveShoulderLeft
+
 
 
 

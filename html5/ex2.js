@@ -8,18 +8,20 @@ function canvasApp() {
     function drawScreen() {
 	theCanvas = document.getElementById("canvasOne");
 	theContext = theCanvas.getContext("2d");
+	
 	if (!canvasSupport) {
 	    alert("Could not get the canvas!");
 	    return;
 	}
 
-	setInterval(animator, 10);
+	setInterval(animator, 100);
     }
 
     var ctr=0;
     function animator(){
 	theContext.clearRect(0,0,500,500);
 	theCanvas.width=theCanvas.width;
+	theContext.lineWidth=2;
 	actionList[ctr](theContext);
 	theContext.stroke();
 	ctr++;

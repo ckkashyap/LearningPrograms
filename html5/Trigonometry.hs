@@ -12,14 +12,14 @@ rotate :: Point -> Angle -> Axis -> Point
 rotate (x,y,z) angle X = (x',y',z')
        where
         x' = x
-        y' = (y * cos rads) - (z * sin rads)
-        z' = (y * sin rads) + (z * cos rads)
+        y' = (y * cos rads) - (0 * sin rads) -- z should be zero
+        z' = (y * sin rads) + (0 * cos rads) -- z should be zero
         rads = angle2radians angle
 rotate (x,y,z) angle Y = (x',y',z')
        where
-        x' = (z * sin rads) + (x * cos rads)
+        x' = (0 * sin rads) + (x * cos rads) -- z should be zero
         y' = y
-        z' = (z * cos rads) - (x * sin rads)
+        z' = (0 * cos rads) - (x * sin rads) -- z should be zero
         rads = angle2radians angle
 rotate (x,y,z) angle Z = (x',y',z')
        where
