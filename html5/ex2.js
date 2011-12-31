@@ -13,7 +13,7 @@ function canvasApp() {
 	    return;
 	}
 
-	setInterval(animator, 100);
+	setInterval(animator, 10);
     }
 
     var ctr=0;
