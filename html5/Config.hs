@@ -7,5 +7,5 @@ foreArmSize = 30 :: Double
 upperLegSize = 30 :: Double
 lowerLegSize = 50 :: Double
 
-distance = 50 :: Double
+distance = 100 :: Double
 

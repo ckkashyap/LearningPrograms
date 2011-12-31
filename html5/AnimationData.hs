@@ -2,8 +2,11 @@ module AnimationData where
 import Control.Monad.State
 
 type Point = (Double,Double,Double)
+
 data Axis = X|Y|Z
      deriving (Show)
+
+data Direction = Right | Left | Up | Down
 
 type Angle = Double
 type Radian = Double

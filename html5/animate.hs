@@ -4,7 +4,7 @@ import Control.Monad.State
 import AnimationData
 import Config
 import Render
-
+import Leg
           
 
 moveShoulderRight :: MyState ()
@@ -17,7 +17,7 @@ moveShoulderRight = do
 moveShoulderLeft :: MyState ()
 moveShoulderLeft = do
      (p@(Position {shoulder = (x,y,z)}):ps) <- get
-     let n = p { shoulder = (x,y-1,z)}
+     let n = p { shoulder = (x,y-20,z)}
      put (n:p:ps)
      return ()
 
@@ -67,19 +67,19 @@ dance' n a = do
 
 dance :: MyState ()
 dance = do
-      dance' 10 (moveLeftHand >>  moveRightHand >> moveShoulderLeft)
-      dance' 20 (moveLeftHand' >> moveRightHand' >> moveShoulderRight)
-      dance' 10 (moveLeftHand >>  moveRightHand >> moveShoulderLeft)
+--      dance' 10 (moveLeftHand >>  moveRightHand >> moveShoulderLeft >> moveLeftKneeUp)
+--      dance' 20 (moveLeftHand' >> moveRightHand' >> moveShoulderRight >> moveLeftKneeDown)
+--      dance' 10 (moveLeftHand >>  moveRightHand >> moveShoulderLeft >> moveLeftKneeUp)
+      moveShoulderLeft
+      dance' 360 ( moveLeftKneeUp)
+      moveShoulderLeft
+      dance' 360 ( moveLeftKneeUp)
+      moveShoulderLeft
+      dance' 360 ( moveLeftKneeUp)
+--      dance' 180 ( moveLeftKneeDown)
+--      dance' 90 ( moveLeftKneeUp)
 
 
-getJS :: MyState () -> String
-getJS steps = "var actionList = [\n" ++ (foldr g [] (map f ps)) ++ "\n]\n"
-      where
-        f = segments2script . convertSegmentsTo2D . toSegments
-        ps = getPositionList steps
-        g scr [] = "function (context) {\n" ++ scr ++ "\n}\n"
-        g scr rest = "function (context) {\n" ++ scr ++ "\n},\n" ++ rest
-      
 
 
 

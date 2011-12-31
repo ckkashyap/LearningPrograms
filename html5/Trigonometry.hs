@@ -29,8 +29,7 @@ rotate (x,y,z) angle Z = (x',y',z')
         rads = angle2radians angle
 
 mapPointOnScreen :: Point -> (Int,Int)
-mapPointOnScreen (x,y,z) = if z > 0 then
-                              (300 + (round (((distance*x)/(distance-z)))), 300 + (round (((distance*y)/(distance-z)))))
-                              --(300 + (round (((zoom*x)/(z)))), 300 + (round (((zoom*y)/(z)))))
-                           else
-                                (0,0)
+mapPointOnScreen (x,y,z) = (300 + (round (((distance*x)/(factor)))), 300 + (round (((distance*y)/(factor)))))
+                         where
+                                factor = if factor' == 0 then 0.0001 else factor'
+                                factor' = distance-z

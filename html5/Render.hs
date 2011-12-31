@@ -1,3 +1,4 @@
+{-# LANGUAGE NamedFieldPuns #-}
 module Render where
 import AnimationData
 import Config
@@ -26,10 +27,10 @@ toSegments (Position {
                      p2  = applyRotations ((hx-(bodySize/2)), hy - bodySize, hz) sx sy sz
                      p3  = applyRotations ((hx+(bodySize/2)), hy - bodySize, hz) sx sy sz
 
-                     p4  =  applyRotations (hx,hy+upperLegSize,hz) lulx luly lulz
-                     p5  =  applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) (lulx + lk) luly lulz
-                     p6  =  applyRotations (hx,hy+upperLegSize,hz) rulx ruly rulz
-                     p7  =  applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) (rulx + rk) ruly rulz
+                     p4  =  applyRotations (hx,hy+upperLegSize,hz) (lulx + sx) (luly+sy) (lulz+sz)
+                     p5  =  applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) (lulx + lk +sx) (luly+sy) (lulz+sz)
+                     p6  =  applyRotations (hx,hy+upperLegSize,hz) (rulx+sx) (ruly+sy) (rulz+sz)
+                     p7  =  applyRotations (hx,hy+upperLegSize+lowerLegSize,hz) (rulx + rk + sx) (ruly+sy) (rulz+sz)
 
                      p8  = applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize , hz)) (luax + sx) (luay + sy) (luaz + sz)
                      p9  = applyRotations (((hx-(bodySize/2)), hy - bodySize + upperArmSize + foreArmSize, hz)) (luax + sx + le) (luay + sy) (luaz + sz)
@@ -83,3 +84,12 @@ getPositionList s = reverse ps
                 where
                         (a,ps) = runState s [initPosition]
 
+
+getJS :: MyState () -> String
+getJS steps = "var actionList = [\n" ++ (foldr g [] (map f ps)) ++ "\n]\n"
+      where
+        f = segments2script . convertSegmentsTo2D . toSegments
+        ps = getPositionList steps
+        g scr [] = "function (context) {\n" ++ scr ++ "\n}\n"
+        g scr rest = "function (context) {\n" ++ scr ++ "\n},\n" ++ rest
+      
