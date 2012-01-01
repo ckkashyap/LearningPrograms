@@ -8,7 +8,7 @@ type Angle         = Double
 type Radian        = Double
 type LineSegment3D = (Point3D, Point3D)
 type LineSegment2D = (Point2D, Point2D)
-
+type Object        = [LineSegment3D]
 
 data Axis = X|Y|Z deriving (Show)
 
@@ -25,7 +25,7 @@ rotate (x,y,z) angle axis = (x', y', z')
         
 
 to2D :: Point3D -> Point2D
-to2D (x,y,z) = (x', y')
+to2D (x,y,z) = (x'+300, y'+300)
      where
         x'      = round (((distance*x)/factor))
         y'      = round (((distance*y)/factor))
@@ -39,7 +39,7 @@ to2DSegment (p1,p2) = (to2D p1, to2D p2)
 distance = 50
 zCoordinate = 25
 
-cube :: [LineSegment3D]
+cube :: Object
 cube = [
      ((-50,-50, zCoordinate), (50, -50, zCoordinate)),
      ((50,-50, zCoordinate), (50, 50, zCoordinate)),
@@ -50,17 +50,20 @@ cube = [
      ((50,-50, zCoordinate+50), (50, 50, zCoordinate+50)),
      ((50,50, zCoordinate+50), (-50, 50, zCoordinate+50)),
      ((-50,50, zCoordinate+50), (-50, -50, zCoordinate+50))
-
      ] 
 
-segments2script :: [LineSegment2D] -> String
-segments2script [] = ""
-segments2script (((x1,y1),(x2,y2)):ss) =  "context.moveTo(" ++ (show x1) ++ ", " ++ (show y1) ++ ");\n" ++ "context.lineTo(" ++ (show x2) ++ ", " ++ (show y2) ++ ");\n" ++ segments2script ss
+objectToJSFunction :: Object -> String
+objectToJSFunction object = "function (context) {\n" ++ (objectToJSFunction' object2D)  ++ "\n}\n"
+ where
+  object2D                                      = map to2DSegment object
+  objectToJSFunction' []                        = ""
+  objectToJSFunction' (((x1,y1),(x2,y2)):lines) = "context.moveTo(" ++ (show x1) ++ ", " ++ (show y1) ++ ");\n" ++ "context.lineTo(" ++ (show x2) ++ ", " ++ (show y2) ++ ");\n" ++ objectToJSFunction' lines
 
-
-getJS lineSegments = "var actionList = [\n" ++ (foldr g [] (map f ps)) ++ "\n]\n"
+getJS :: [Object] -> String
+getJS objects = "var actionList = [\n" ++ (foldr g [] (map objectToJSFunction objects)) ++ "\n]\n"
       where
-        line
+        g scr [] = scr
+        g scr rest = scr ++ "," ++ rest
 
 
 
