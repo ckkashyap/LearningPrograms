@@ -40,6 +40,17 @@ to2DSegment (p1,p2) = (to2D p1, to2D p2)
 distance = 150
 zCoordinate = 0
 
+squareAtZ z = [
+     ((-50,-50, zCoordinate - z), (50, -50, zCoordinate - z)),
+     ((50,-50, zCoordinate - z), (50, 50, zCoordinate - z)),
+     ((50,50, zCoordinate - z), (-50, 50, zCoordinate - z)),
+     ((-50,50, zCoordinate - z), (-50, -50, zCoordinate - z))
+     ]    
+
+squarePipe = concat $ map squareAtZ [ i*10 | i <- [-15 .. 15] ]
+
+
+
 cube :: Object
 cube = [
      ((-50,-50, zCoordinate-20), (50, -50, zCoordinate-20)),
@@ -80,7 +91,7 @@ rotateObject angle axis = map f
 
 getObjectList :: [Angle] -> [Object]
 getObjectList [] = []
-getObjectList (i:is) = (rotateObject i X cube) : getObjectList is
+getObjectList (i:is) = (rotateObject i Y squarePipe) : getObjectList is
 
 angles :: [Angle]
 angles = [0..360]
