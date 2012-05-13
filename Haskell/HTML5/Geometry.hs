@@ -34,4 +34,3 @@ project (x,y,z) = (x'+300, y'+300)
 projectTriangle :: Triangle3D -> Triangle2D
 projectTriangle (p1, p2, p3) = (p1', p2', p3') where
                 [p1', p2', p3'] = map project [p1, p2, p3]
-                  
