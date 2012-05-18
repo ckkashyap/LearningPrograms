@@ -1,12 +1,13 @@
 module Geometry where
 
-type Point3D       = (Double, Double, Double)
-type Point2D       = (Int, Int)
-type Angle         = Double
-type Radian        = Double
-type Triangle3D      = (Point3D, Point3D, Point3D)
-type Triangle2D      = (Point2D, Point2D, Point2D)
-type Object         = [Triangle3D]
+type Point3D    = (Double, Double, Double)
+type Point2D    = (Int, Int)
+type Angle      = Double
+type Radian     = Double
+type Triangle3D = (Point3D, Point3D, Point3D)
+type Triangle2D = (Point2D, Point2D, Point2D)
+type Scene      = [Triangle3D]
+type Animation  = [Scene]
 
 data Axis = X | Y | Z deriving (Show)
 
