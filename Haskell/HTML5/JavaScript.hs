@@ -34,12 +34,3 @@ animation2JS animation = "var actionList = [\n" ++ (foldr f [] (map object2JS an
              f sceneJS rest =  sceneJS ++ ",\n" ++ rest
 
 
-test_points = map (\i -> (i,i+1,i-1)) [1..3] :: [Geometry.Point3D]
-
-test_triangle = (p1, p2, p3) where [p1, p2, p3] = test_points
-
-test_scene = [test_triangle] :: Geometry.Scene
-
-test_animation = take 2 $ cycle [test_scene] :: Geometry.Animation
-
-output = putStr $ animation2JS test_animation
