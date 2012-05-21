@@ -6,8 +6,12 @@ type Angle      = Double
 type Radian     = Double
 type Triangle3D = (Point3D, Point3D, Point3D)
 type Triangle2D = (Point2D, Point2D, Point2D)
-type Scene      = [Triangle3D]
-type Animation  = [Scene]
+type Frame      = [TransformedTriangle]
+type Animation  = [Frame]
+type Rotation   = (Angle, Angle, Angle)
+type Translation = (Double, Double, Double)
+
+data TransformedTriangle = TransformedTriangle Triangle3D Rotation Translation
 
 data Axis = X | Y | Z deriving (Show)
 
@@ -45,7 +49,6 @@ project (x,y,z) = (x'+300, y'+300)
         factor   = if factor' == 0 then 0.0001 else factor'
         factor'  = distance + z
         distance = 150
-
 
 projectTriangle :: Triangle3D -> Triangle2D
 projectTriangle (p1, p2, p3) = (p1', p2', p3') where
