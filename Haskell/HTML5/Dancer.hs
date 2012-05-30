@@ -67,6 +67,3 @@ dancer2triangles d = [ neck, backBone, upperLeftArm, upperRightArm, lowerLeftArm
                  lowerRightLeg = (upperRightLegTip, upperRightLegTip, lowerRightLegTip)
                  lowerRightLegTip = otherEnd upperRightLegTip (lowerRightLegAngle d) lowerLegLength
 
-                 
-
-

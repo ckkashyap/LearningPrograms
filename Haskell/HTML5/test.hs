@@ -1,10 +1,8 @@
 
 
-type A = Int
-type B = Int
+data Hello = Hello {aaa :: Int, bbb :: Int} deriving Show
 
 
---let x = 1 :: A
+d = Hello {aaa = 10, bbb = 10}
 
-f :: A -> Int
-f x = x
+
