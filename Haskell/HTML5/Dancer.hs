@@ -4,27 +4,16 @@ import Geometry
 type Coordinates3D = (Double, Double, Double)
 
 data Dancer = Dancer {
-     
-     neckAngle :: Coordinates3D,
-     
-     backBoneAngle :: Coordinates3D,
-
-     backBonePosition :: Coordinates3D,
- 
-     upperLeftArmAngle :: Coordinates3D,
-
+     neckAngle          :: Coordinates3D,
+     backBoneAngle      :: Coordinates3D,
+     backBonePosition   :: Coordinates3D,
+     upperLeftArmAngle  :: Coordinates3D,
      upperRightArmAngle :: Coordinates3D,
-
-     lowerLeftArmAngle :: Coordinates3D,
-
+     lowerLeftArmAngle  :: Coordinates3D,
      lowerRightArmAngle :: Coordinates3D,
-
-     upperLeftLegAngle :: Coordinates3D,
-
-     lowerLeftLegAngle :: Coordinates3D,
-
+     upperLeftLegAngle  :: Coordinates3D,
+     lowerLeftLegAngle  :: Coordinates3D,
      upperRightLegAngle :: Coordinates3D,
-
      lowerRightLegAngle :: Coordinates3D
      } deriving Show
 
@@ -47,7 +36,7 @@ upperArmLength = 34
 lowerArmLength = 21
 upperLegLength = 34
 lowerLegLength = 55
-neckLength = 13
+neckLength     = 13
 
 
 dancer2triangles :: Dancer -> [Triangle3D]
