@@ -51,7 +51,7 @@ Executable HTML5
  Main-is: Main.hs
   
   -- Packages needed in order to build 
- Build-depends: base
+ Build-depends: base, mtl
   
   -- Modules not exported by this package.
   -- Other-modules:       
