@@ -6,13 +6,10 @@ type Angle      = Double
 type Radian     = Double
 type Triangle3D = (Point3D, Point3D, Point3D)
 type Triangle2D = (Point2D, Point2D, Point2D)
-type Frame      = [TransformedTriangle]
+type Frame      = [Triangle3D]
 type Animation  = [Frame]
-type Rotation   = (Angle, Angle, Angle)
-type Translation = (Double, Double, Double)
-
-data TransformedTriangle = TransformedTriangle Triangle3D Rotation Translation
-
+type Rotation   = (Axis, Angle)
+type Translation = (Axis, Double)
 data Axis = X | Y | Z deriving (Show)
 
 rotatePoint :: Angle -> Axis -> Point3D -> Point3D
@@ -53,3 +50,5 @@ project (x,y,z) = (x'+300, y'+300)
 projectTriangle :: Triangle3D -> Triangle2D
 projectTriangle (p1, p2, p3) = (p1', p2', p3') where
                 [p1', p2', p3'] = map project [p1, p2, p3]
+
+

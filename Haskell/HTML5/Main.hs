@@ -1,21 +1,26 @@
-import Geometry
+import Dancer
 import JavaScript
 
 
-test_points = map (\i -> (i,i+1,i-1)) [1..3] :: [Point3D]
+dancer = Dancer {
+     neckAngle = (0,90, 90),
+     backBoneAngle = (0, 90, 90),
+     backBonePosition = (0, 0, 0),
+     upperLeftArmAngle = (0, 90, 210),
+     upperRightArmAngle = (0, 90, -30),
+     lowerLeftArmAngle = (0, 90, -90),
+     lowerRightArmAngle = (0, 90, -90),
+     upperLeftLegAngle = (0, 90, 210),
+     upperRightLegAngle = (0, 90, -30),
+     lowerLeftLegAngle = (0, 90, -90),
+     lowerRightLegAngle = (0, 90, -90)
+       }
 
-test_triangle = (p1, p2, p3) where [p1, p2, p3] = test_points
+ts = dancer2triangles dancer
 
-test_scene = [TransformedTriangle test_triangle (0,0,0) (0,0,0)] :: Frame
-
-test_animation = take 2 $ cycle [test_scene] :: Animation
-
-output = putStr $ animation2JS test_animation
-
-zCoordinate = 0
-
-
-
+javascript = animation2JS [ts]
 
 main = do
-     putStrLn $ ""
+     writeFile "actionList.js" javascript
+     putStrLn (show (length ts))
+     putStrLn "Done"

@@ -22,10 +22,9 @@ triangle2js (p1, p2, p3) = triangle2js' (take 4 (cycle [p1, p2, p3])) where
 frame2JS :: Geometry.Frame -> String
 frame2JS frame = "function (ctx) {\n" ++ (frame2JS' frame2D)  ++ "}\n"
  where
-  frame2D = map Geometry.projectTriangle (map triangle' frame)
+  frame2D = map Geometry.projectTriangle frame
   frame2JS' [] = ""
   frame2JS' (t:ts) = triangle2js t ++ frame2JS' ts
-  triangle' (Geometry.TransformedTriangle t _ _) = t
 
 
 animation2JS :: Geometry.Animation -> String
