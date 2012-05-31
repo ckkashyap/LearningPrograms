@@ -4,19 +4,73 @@ import Geometry
 type Coordinates3D = (Double, Double, Double)
 
 data Dancer = Dancer {
-     neckAngle          :: Coordinates3D,
-     backBoneAngle      :: Coordinates3D,
-     backBonePosition   :: Coordinates3D,
-     upperLeftArmAngle  :: Coordinates3D,
-     upperRightArmAngle :: Coordinates3D,
-     lowerLeftArmAngle  :: Coordinates3D,
-     lowerRightArmAngle :: Coordinates3D,
-     upperLeftLegAngle  :: Coordinates3D,
-     lowerLeftLegAngle  :: Coordinates3D,
-     upperRightLegAngle :: Coordinates3D,
-     lowerRightLegAngle :: Coordinates3D
+     neckAngleX          :: Double,
+     neckAngleY          :: Double,
+     neckAngleZ          :: Double,
+     backBoneAngleX      :: Double,
+     backBoneAngleY      :: Double,
+     backBoneAngleZ      :: Double,
+     backBonePositionX   :: Double,
+     backBonePositionY   :: Double,
+     backBonePositionZ   :: Double,
+     upperLeftArmAngleX  :: Double,
+     upperLeftArmAngleY  :: Double,
+     upperLeftArmAngleZ  :: Double,
+     upperRightArmAngleX :: Double,
+     upperRightArmAngleY :: Double,
+     upperRightArmAngleZ :: Double,
+     lowerLeftArmAngleX  :: Double,
+     lowerLeftArmAngleY  :: Double,
+     lowerLeftArmAngleZ  :: Double,
+     lowerRightArmAngleX :: Double,
+     lowerRightArmAngleY :: Double,
+     lowerRightArmAngleZ :: Double,
+     upperLeftLegAngleX  :: Double,
+     upperLeftLegAngleY  :: Double,
+     upperLeftLegAngleZ  :: Double,
+     lowerLeftLegAngleX  :: Double,
+     lowerLeftLegAngleY  :: Double,
+     lowerLeftLegAngleZ  :: Double,
+     upperRightLegAngleX :: Double,
+     upperRightLegAngleY :: Double,
+     upperRightLegAngleZ :: Double,
+     lowerRightLegAngleX :: Double,
+     lowerRightLegAngleY :: Double,
+     lowerRightLegAngleZ :: Double
      } deriving Show
 
+neckAngle          :: Dancer -> (Double, Double, Double)
+neckAngle d = (neckAngleX d, neckAngleY d, neckAngleZ d)
+
+backBoneAngle      :: Dancer -> (Double, Double, Double)
+backBoneAngle d = (backBoneAngleX d, backBoneAngleY d, backBoneAngleZ d)
+
+backBonePosition   :: Dancer -> (Double, Double, Double)
+backBonePosition d = (backBonePositionX d, backBonePositionY d, backBonePositionZ d)
+
+upperLeftArmAngle  :: Dancer -> (Double, Double, Double)
+upperLeftArmAngle d = (upperLeftArmAngleX d, upperLeftArmAngleY d, upperLeftArmAngleZ d)
+
+upperRightArmAngle :: Dancer -> (Double, Double, Double)
+upperRightArmAngle d = (upperRightArmAngleX d, upperRightArmAngleY d, upperRightArmAngleZ d)
+
+lowerLeftArmAngle  :: Dancer -> (Double, Double, Double)
+lowerLeftArmAngle d = (lowerLeftArmAngleX d, lowerLeftArmAngleY d, lowerLeftArmAngleZ d)
+
+lowerRightArmAngle :: Dancer -> (Double, Double, Double)
+lowerRightArmAngle d = (lowerRightArmAngleX d, lowerRightArmAngleY d, lowerRightArmAngleZ d)
+
+upperLeftLegAngle  :: Dancer -> (Double, Double, Double)
+upperLeftLegAngle d = (upperLeftLegAngleX d, upperLeftLegAngleY d, upperLeftLegAngleZ d)
+
+lowerLeftLegAngle  :: Dancer -> (Double, Double, Double)
+lowerLeftLegAngle d = (lowerLeftLegAngleX d, lowerLeftLegAngleY d, lowerLeftLegAngleZ d)
+
+upperRightLegAngle :: Dancer -> (Double, Double, Double)
+upperRightLegAngle d = (upperRightLegAngleX d, upperRightLegAngleY d, upperRightLegAngleZ d)
+
+lowerRightLegAngle :: Dancer -> (Double, Double, Double)
+lowerRightLegAngle d = (lowerRightLegAngleX d, lowerRightLegAngleY d, lowerRightLegAngleZ d)
 
 otherEnd :: Point3D -> Coordinates3D -> Double -> Point3D
 otherEnd (x, y, z) (xa, ya, za) d = (x', y', z') where

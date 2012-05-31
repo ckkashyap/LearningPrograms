@@ -28,7 +28,7 @@ frame2JS frame = "function (ctx) {\n" ++ (frame2JS' frame2D)  ++ "}\n"
 
 
 animation2JS :: Geometry.Animation -> String
-animation2JS animation = "var actionList = [\n" ++ (foldr f [] (map frame2JS animation)) ++ "]\n" where
+animation2JS animation = "var actionList = [\n" ++ (foldr f [] (map frame2JS (reverse animation))) ++ "]\n" where
              f sceneJS []   = sceneJS
              f sceneJS rest =  sceneJS ++ ",\n" ++ rest
 
