@@ -8,8 +8,8 @@ type Attribute = (Key, Value)
 data XML_AST =  
   Node Tag [Attribute] [XML_AST]
   | Body String
+  | Comment String
   deriving Show
-
 
 getBody = fmap Body $ many1 $ noneOf "<>"
 
@@ -17,6 +17,13 @@ parseXML :: Parser XML_AST
 parseXML =
   do
     try withoutExplictCloseTag <|>  withExplicitCloseTag
+
+comment :: Parser XML_AST
+comment =
+  do
+    try $ string "<!--"
+    body <- manyTill anyChar (string "-->")
+    return (Comment body)
 
 withExplicitCloseTag :: Parser XML_AST
 withExplicitCloseTag = 
@@ -26,8 +33,7 @@ withExplicitCloseTag =
     closeTag tag
     return (Node tag a innerXML)
 
-
-innerXML = parseXML <|> getBody
+innerXML = comment <|> parseXML <|> getBody
 
 openTag :: Parser (String, [(String,String)])
 openTag =
