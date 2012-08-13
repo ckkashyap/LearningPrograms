@@ -52,6 +52,7 @@ serveLog port handlerfunc = withSocketsDo $
                  
                  
 -- A simple handler that prints incoming packets
+
 plainHandler :: HandlerFunc
 plainHandler h  = do
     msg <- hGetLine h
