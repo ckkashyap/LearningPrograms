@@ -76,12 +76,14 @@ plainHandler :: HandlerFunc
 plainHandler h  = do
     hdr <- readRawHeader h
     let key = getHeaderValue "Sec-WebSocket-Key" hdr
+    putStrLn $ "key = " ++ (show key)
     let protocol = getHeaderValue "Sec-WebSocket-Protocol" hdr
-    let totalKey = key ++ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+    let totalKey = "JJHMbDL1EzLkh9GBhXDw==258EAFA5-E914-47DA-95CA-C5AB0DC85B1" -- key ++ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
     (Right sha1) <- OpenSSL.getSHA1 totalKey
     (Right base64EncodedSHA1) <- OpenSSL.encodeBase64 (drop 9 (take 40 sha1))
-    putStrLn (show base64EncodedSHA1)
     let respHdr = getResponseHeaders protocol (take (length base64EncodedSHA1 - 1) base64EncodedSHA1)
     foldr (>>) (return ())  $  map (SI.hPutStrLn h) $ map (\e -> e ++ "\r") respHdr
-    foldr (>>) (return ())  $  map putStrLn $ map (\e -> e ++ "\r") respHdr  
+    foldr (>>) (return ())  $  map putStrLn $ map (\e -> e ++ "\r") respHdr
+    SI.hPutStrLn h "\r\n"
+
 
