@@ -1,55 +1,51 @@
-import Data.Bits
-import Network.Socket
-import Network.BSD
-import Data.List
-import Control.Concurrent
-import Control.Concurrent.MVar
-import System.IO
+import qualified Network.Socket as NS
+import qualified Control.Concurrent as CC
+import qualified System.IO as SI
 
-type HandlerFunc = Handle -> IO ()
+type HandlerFunc = SI.Handle -> IO ()
 
 main = serveLog "9090" plainHandler
 
 serveLog :: String              -- ^ Port number or name; 514 is default
          -> HandlerFunc         -- ^ Function to handle incoming messages
          -> IO ()
-serveLog port handlerfunc = withSocketsDo $
+serveLog port handlerfunc = NS.withSocketsDo $
     do -- Look up the port.  Either raises an exception or returns
        -- a nonempty list.  
-       addrinfos <- getAddrInfo 
-                    (Just (defaultHints {addrFlags = [AI_PASSIVE]}))
+       addrinfos <- NS.getAddrInfo 
+                    (Just (NS.defaultHints {NS.addrFlags = [NS.AI_PASSIVE]}))
                     Nothing (Just port)
        let serveraddr = head addrinfos
 
        -- Create a socket
-       sock <- socket (addrFamily serveraddr) Stream defaultProtocol
+       sock <- NS.socket (NS.addrFamily serveraddr) NS.Stream NS.defaultProtocol
 
        -- Bind it to the address we're listening to
-       bindSocket sock (addrAddress serveraddr)
+       NS.bindSocket sock (NS.addrAddress serveraddr)
 
        -- Start listening for connection requests.  Maximum queue size
        -- of 5 connection requests waiting to be accepted.
-       listen sock 5
+       NS.listen sock 5
 
        -- Create a lock to use for synchronizing access to the handler
-       lock <- newMVar ()
+       lock <- CC.newMVar ()
 
        -- Loop forever waiting for connections.  Ctrl-C to abort.
        procRequests lock sock
 
     where
           -- | Process incoming connection requests
-          procRequests :: MVar () -> Socket -> IO ()
+          procRequests :: CC.MVar () -> NS.Socket -> IO ()
           procRequests lock mastersock = 
-              do (connsock, clientaddr) <- accept mastersock
-                 forkIO $ procMessages lock connsock clientaddr
+              do (connsock, clientaddr) <- NS.accept mastersock
+                 CC.forkIO $ procMessages lock connsock clientaddr
                  procRequests lock mastersock
 
           -- | Process incoming messages
-          procMessages :: MVar () -> Socket -> SockAddr -> IO ()
+          procMessages :: CC.MVar () -> NS.Socket -> NS.SockAddr -> IO ()
           procMessages lock connsock clientaddr =
-              do connhdl <- socketToHandle connsock ReadWriteMode
-                 hSetBuffering connhdl LineBuffering
+              do connhdl <- NS.socketToHandle connsock SI.ReadWriteMode
+                 SI.hSetBuffering connhdl SI.LineBuffering
                  handlerfunc connhdl
                  
                  
@@ -57,7 +53,7 @@ serveLog port handlerfunc = withSocketsDo $
 
 plainHandler :: HandlerFunc
 plainHandler h  = do
-    msg <- hGetLine h
+    msg <- SI.hGetLine h
     putStrLn $ (show (length msg)) ++ msg
     if (length msg > 1) then plainHandler h else do
       return ()
