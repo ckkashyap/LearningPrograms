@@ -1,6 +1,7 @@
 import qualified Network.Socket as NS
 import qualified Control.Concurrent as CC
 import qualified System.IO as SI
+import qualified OpenSSL as OpenSSL
 
 type HandlerFunc = SI.Handle -> IO ()
 
@@ -10,27 +11,20 @@ serveLog :: String              -- ^ Port number or name; 514 is default
          -> HandlerFunc         -- ^ Function to handle incoming messages
          -> IO ()
 serveLog port handlerfunc = NS.withSocketsDo $
-    do -- Look up the port.  Either raises an exception or returns
-       -- a nonempty list.  
+    do 
        addrinfos <- NS.getAddrInfo 
                     (Just (NS.defaultHints {NS.addrFlags = [NS.AI_PASSIVE]}))
                     Nothing (Just port)
        let serveraddr = head addrinfos
 
-       -- Create a socket
        sock <- NS.socket (NS.addrFamily serveraddr) NS.Stream NS.defaultProtocol
 
-       -- Bind it to the address we're listening to
        NS.bindSocket sock (NS.addrAddress serveraddr)
 
-       -- Start listening for connection requests.  Maximum queue size
-       -- of 5 connection requests waiting to be accepted.
        NS.listen sock 5
 
-       -- Create a lock to use for synchronizing access to the handler
        lock <- CC.newMVar ()
 
-       -- Loop forever waiting for connections.  Ctrl-C to abort.
        procRequests lock sock
 
     where
@@ -51,10 +45,43 @@ serveLog port handlerfunc = NS.withSocketsDo $
                  
 -- A simple handler that prints incoming packets
 
+readRawHeader :: SI.Handle -> IO [String]
+readRawHeader h = do
+  line' <- SI.hGetLine h
+  let line = take (length line' -1) line'
+  rest <- if length line > 0 then readRawHeader h else return []
+  return (line:rest)
+
+getHeaderValue :: String -> [String] -> String
+getHeaderValue _ [] = []               
+getHeaderValue h (s:ss) = if rightHeader then extractKey else getHeaderValue h ss where
+  headerField = h ++ ": "
+  lengthOfHeaderField = length headerField
+  extractKey = drop lengthOfHeaderField s
+  rightHeader = (take lengthOfHeaderField s) == headerField
+
+
+getResponseHeaders :: String -> String -> [String]
+getResponseHeaders protocol key =
+  [
+      "HTTP/1.1 101 Switching Protocols"
+    , "Upgrade: websocket"
+    , "Connection: Upgrade"
+    , "Sec-WebSocket-Accept: " ++ key
+    , "Sec-WebSocket-Protocol: " ++ protocol
+  ]
+
+
 plainHandler :: HandlerFunc
 plainHandler h  = do
-    msg <- SI.hGetLine h
-    putStrLn $ (show (length msg)) ++ msg
-    if (length msg > 1) then plainHandler h else do
-      return ()
-      putStrLn "Hello World"
+    hdr <- readRawHeader h
+    let key = getHeaderValue "Sec-WebSocket-Key" hdr
+    let protocol = getHeaderValue "Sec-WebSocket-Protocol" hdr
+    let totalKey = key ++ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+    (Right sha1) <- OpenSSL.getSHA1 totalKey
+    (Right base64EncodedSHA1) <- OpenSSL.encodeBase64 (drop 9 (take 40 sha1))
+    putStrLn (show base64EncodedSHA1)
+    let respHdr = getResponseHeaders protocol (take (length base64EncodedSHA1 - 1) base64EncodedSHA1)
+    foldr (>>) (return ())  $  map (SI.hPutStrLn h) $ map (\e -> e ++ "\r") respHdr
+    foldr (>>) (return ())  $  map putStrLn $ map (\e -> e ++ "\r") respHdr  
+
