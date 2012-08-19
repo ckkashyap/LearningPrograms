@@ -2,6 +2,10 @@ import qualified Network.Socket as NS
 import qualified Control.Concurrent as CC
 import qualified System.IO as SI
 import qualified OpenSSL as OpenSSL
+import qualified Codec.Compression.GZip as CCG
+import qualified Data.ByteString.Lazy as DB
+
+
 
 type HandlerFunc = SI.Handle -> IO ()
 
@@ -18,6 +22,7 @@ serveLog port handlerfunc = NS.withSocketsDo $
        let serveraddr = head addrinfos
 
        sock <- NS.socket (NS.addrFamily serveraddr) NS.Stream NS.defaultProtocol
+       NS.setSocketOption sock NS.ReuseAddr 1
 
        NS.bindSocket sock (NS.addrAddress serveraddr)
 
@@ -68,22 +73,45 @@ getResponseHeaders protocol key =
     , "Upgrade: websocket"
     , "Connection: Upgrade"
     , "Sec-WebSocket-Accept: " ++ key
-    , "Sec-WebSocket-Protocol: " ++ protocol
+    , ""
+    --, "Sec-WebSocket-Protocol: " ++ protocol
+    --, "Orgin: null"
   ]
 
 
 plainHandler :: HandlerFunc
 plainHandler h  = do
     hdr <- readRawHeader h
+    putStrLn "REQUEST"
+    foldr (>>) (return ())  $  map putStrLn $ map (\e -> e ++ "\r") hdr
     let key = getHeaderValue "Sec-WebSocket-Key" hdr
     putStrLn $ "key = " ++ (show key)
     let protocol = getHeaderValue "Sec-WebSocket-Protocol" hdr
-    let totalKey = "JJHMbDL1EzLkh9GBhXDw==258EAFA5-E914-47DA-95CA-C5AB0DC85B1" -- key ++ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
-    (Right sha1) <- OpenSSL.getSHA1 totalKey
-    (Right base64EncodedSHA1) <- OpenSSL.encodeBase64 (drop 9 (take 40 sha1))
-    let respHdr = getResponseHeaders protocol (take (length base64EncodedSHA1 - 1) base64EncodedSHA1)
-    foldr (>>) (return ())  $  map (SI.hPutStrLn h) $ map (\e -> e ++ "\r") respHdr
-    foldr (>>) (return ())  $  map putStrLn $ map (\e -> e ++ "\r") respHdr
-    SI.hPutStrLn h "\r\n"
+    let totalKey = key ++ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+
+    putStrLn totalKey
+
+--    let totalKey = "x3JJHMbDL1EzLkh9GBhXDw==258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+    (Right sha1) <- OpenSSL.getSHA1 (OpenSSL.string2byteString totalKey)
+    (Right base64EncodedSHA1) <- OpenSSL.encodeBase64 sha1
+    let respHdr = getResponseHeaders protocol base64EncodedSHA1
+    foldr (>>) (return ())  $  map (SI.hPutStr h) $ map (\e -> e ++ "\r\n") respHdr
+    foldr (>>) (return ())  $  map putStr $ map (\e -> e ++ "\r\n") respHdr
+    SI.hFlush h
+    SI.hSetBuffering h SI.NoBuffering
+    talk h
+    
+
+talk h = do
+    putStrLn "printing out hello world"
+    let bs = DB.pack [0x81,4,66,66,66,10] 
+    --let cbs = CCG.compress bs
+    putStrLn (show bs)
+    DB.hPutStr h bs
+    --SI.hPutStrLn h "HELLOWORLD"
+    SI.hFlush h
+    CC.threadDelay 10000000
+    talk h
+  
 
 
