@@ -1,29 +1,31 @@
 import Control.Monad
 import Control.Monad.Trans
-import Control.Monad.Trans.Maybe
+import Control.Monad.Trans.Error
 
 
-hello :: IO (Maybe String)
+hello :: IO (Either String Int)
 hello =  do
 	putStrLn "Say Something"
 	l <- getLine
-	if l == "HELLO" then return (Just l) else return Nothing
+	if l == "HELLO" then return (Right 100) else return (Left "BOOM")
 
 
-world :: MaybeT IO String
-world = MaybeT hello
+world :: ErrorT String IO Int
+world = ErrorT hello
 
-askPassword :: MaybeT  IO String
+
+askPassword :: ErrorT String IO Int
 askPassword = do
 	lift $ putStrLn "Enter Password:"
 	l <- lift getLine
-	world
+
+	x <- ErrorT hello
 
 	lift $ putStrLn "Enter Password:"
 	l <- lift getLine
-	return l
+	return 10
 
-runIt = runMaybeT askPassword 
+runIt = runErrorT askPassword 
 
 main = do
 	x <- runIt
