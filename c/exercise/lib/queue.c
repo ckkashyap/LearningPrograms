@@ -11,6 +11,21 @@ Queue * q_new(){
 	return q;
 }
 
+Queue *q_pushback(Queue *queue, void *val){
+	LLNode *t, *n;
+	if(queue == NULL)return q_enqueue(queue, val);
+
+	t = queue->tail;
+	n = (LLNode*)malloc(sizeof(LLNode));
+	n->next = NULL;
+	n->prev = t;
+	n->val = val;
+	t->next = n;
+	queue->tail=n;
+
+	return queue;
+}
+
 Queue * q_enqueue(Queue *queue, void *val) {
 	if(queue == NULL) {
 		queue = q_new();
@@ -35,6 +50,10 @@ void * q_dequeue(Queue *queue) {
 void q_print(Queue *q, void (*f) (void *)) {
 	printf("%p\n", q->head);
 	ll_print(q->head, f);
+}
+
+int q_isEmpty(Queue *q) { 
+	return (q->tail == NULL);
 }
 
 

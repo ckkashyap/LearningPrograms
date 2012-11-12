@@ -14,5 +14,7 @@ Queue * q_enqueue(Queue *queue, void *val);
 void * q_dequeue(Queue *queue);
 void q_delete(Queue *queue);
 void q_print(Queue *q, void (*f) (void *));
+int q_isEmpty(Queue *q);
+Queue *q_pushback(Queue *queue, void *val);
 
 #endif

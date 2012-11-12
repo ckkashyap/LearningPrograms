@@ -48,5 +48,6 @@ void bst_dump(BSTNode *root, void (*f)(BSTNode *n)) {
 
 	bst_dump(root->left, f);
 	f(root);
+	printf("\n");
 	bst_dump(root->right, f);
 }

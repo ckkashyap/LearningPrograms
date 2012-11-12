@@ -1,4 +1,4 @@
-TARGETS = test_q test_ll test_bst
+TARGETS = test_q test_ll test_bst test_zigzag
 
 help:
 	@echo 
@@ -24,6 +24,8 @@ test_ll: test_ll.o queue.o linkedlist.o
 
 test_bst: test_bst.o bst.o
 	gcc $^ -o $@
+
+test_zigzag: test_zigzag.o bst.o queue.o linkedlist.o
 
 EXECS = $(patsubst %.c, %, $(wildcard test*c))
 
