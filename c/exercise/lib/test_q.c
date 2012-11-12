@@ -29,7 +29,10 @@ int main(int argc, char *argv[]) {
 	queue = q_enqueue(queue, &v2);
 	queue = q_enqueue(queue, &v3);
 	queue = q_enqueue(queue, &v4);
+
 	queue = q_pushback(queue,&v5);
+
+	queue = q_reverse(queue);
 
 	printf("After enqueing all\n");
 	q_print(queue, f);

@@ -56,6 +56,37 @@ int q_isEmpty(Queue *q) {
 	return (q->tail == NULL);
 }
 
+Queue * q_switchDirection(Queue *queue) {
+	LLNode *t;
+	if(queue == NULL)return NULL;
+	t = queue->head;
+	queue->tail=t;
+}
+
+Queue *q_reverse(Queue *q) {
+	LLNode *t, *p = NULL, *n=NULL;
+
+	if(q == NULL)return q;
+	t=q->head;
+
+	while(t) {
+		n = t->next;
+		p = t->prev;
+
+		
+		t->next=p;
+		t->prev=n;
+		
+		t=t->prev;
+	}
+
+	t = q->head;
+	q->head=q->tail;
+	q->tail=t;
+
+	return q;
+}
+
 
 void q_delete(Queue *queue) {
 }

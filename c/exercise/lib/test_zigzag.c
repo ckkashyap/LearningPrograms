@@ -37,16 +37,19 @@ void traverse(BSTNode *root) {
 		if(node->level != prevLevel){
 			prevLevel=node->level;
 			printf(" | " );
+			q_pushback(q, node);
+			q=q_reverse(q);
+			node = (NODE *)q_dequeue(q);
 		}
 		if (node->node!=NULL) {
 			BSTNode *v1,*v2;
 
-			if ( node -> level % 2) {
+			if (node -> level % 2) {
 				v1 = node->node->left;
 				v2 = node->node->right;
 			} else {
-				v1 = node->node->left;
-				v2 = node->node->right;
+				v2 = node->node->left;
+				v1 = node->node->right;
 			}
 
 
@@ -69,7 +72,47 @@ void traverse(BSTNode *root) {
 
 int main(int argc, char *argv[]) {
 	BSTNode *root=NULL;
+
+
+
+
+
+	root = bst_insert(root, newNode(16));
+	root = bst_insert(root, newNode(8));
+	root = bst_insert(root, newNode(24));
+	root = bst_insert(root, newNode(4));
+	root = bst_insert(root, newNode(12));
+	root = bst_insert(root, newNode(20));
+	root = bst_insert(root, newNode(28));
+	root = bst_insert(root, newNode(2));
+	root = bst_insert(root, newNode(6));
+	root = bst_insert(root, newNode(10));
+	root = bst_insert(root, newNode(14));
+	root = bst_insert(root, newNode(18));
+	root = bst_insert(root, newNode(22));
+	root = bst_insert(root, newNode(26));
+	root = bst_insert(root, newNode(30));
+	root = bst_insert(root, newNode(1));
+	root = bst_insert(root, newNode(3));
+	root = bst_insert(root, newNode(5));
+	root = bst_insert(root, newNode(7));
+	root = bst_insert(root, newNode(9));
+	root = bst_insert(root, newNode(11));
+	root = bst_insert(root, newNode(13));
+	root = bst_insert(root, newNode(15));
+	root = bst_insert(root, newNode(17));
+	root = bst_insert(root, newNode(19));
+	root = bst_insert(root, newNode(21));
+	root = bst_insert(root, newNode(23));
+	root = bst_insert(root, newNode(25));
+	root = bst_insert(root, newNode(27));
+	root = bst_insert(root, newNode(29));
+	root = bst_insert(root, newNode(31));
 	
+
+
+	
+	/*
 	root = bst_insert(root, newNode(8));
 	root = bst_insert(root, newNode(4));
 	root = bst_insert(root, newNode(12));
@@ -85,7 +128,7 @@ int main(int argc, char *argv[]) {
 	root = bst_insert(root, newNode(11));
 	root = bst_insert(root, newNode(13));
 	root = bst_insert(root, newNode(15));
-	
+	*/
 
 
 
