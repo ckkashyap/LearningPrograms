@@ -13,14 +13,15 @@ emit str = do
 	
 
 fetch :: MyType -> String
-fetch something = evalState something ""
+fetch something = let (a, s) = runState something "" in s
+	
 
 
 test3 :: MyType
 test3 = do
 	emit "hello"
 	emit "world"
-	return ""
+	return "dingo"
 
 
 
