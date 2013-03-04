@@ -5,27 +5,33 @@ rhythm n = Modify (Instrument Percussion) $
                 (line (take (n * 16) (cycle [c 3 en, rest en, e 3 en, rest en])))
                 
 
-tune = 
-       line [a 4 dqn, b 4 en, c 5 en, b 4 en, a 4 en, e 4 en ] :+:
-       line [a 4 dqn, b 4 en, c 5 en, b 4 en, b 4 en, enr ] :+:
-       line [g 4 dqn, a 4 en, b 4 en, a 4 en, g 4 en, d 4 en ] :+:
-       line [g 4 dqn, a 4 en, b 4 en, a 4 en, a 4 en, enr] :+:
+tune f oct = f $
+       line [a oct dqn, b oct en, c (oct+1) en, b oct en, a oct en, e oct en ] :+:
+       line [a oct dqn, b oct en, c (oct+1) en, b oct en, b oct en, enr ] :+:
+       line [g oct dqn, a oct en, b oct en, a oct en, g oct en, d oct en ] :+:
+       line [g oct dqn, a oct en, b oct en, a oct en, a oct en, enr] :+:
 
-       line [a 4 dqn, b 4 en, c 5 en, b 4 en, a 4 en, e 4 en ] :+:     
-       line [a 4 dqn, b 4 en, c 5 en, c 5 en, b 4 en, enr ] :+:
-       line [g 4 dqn, a 4 en, b 4 en, a 4 en, g 4 en, d 4 en ] :+:
-       line [g 4 dqn, b 4 en, c 5 en, b 4 en, a 4 sn, b 4 sn, a 4 sn, enr] :+:
+       line [a oct dqn, b oct en, c (oct+1) en, b oct en, a oct en, e oct en ] :+:     
+       line [a oct dqn, b oct en, c (oct+1) en, c (oct+1) en, b oct en, enr ] :+:
+       line [g oct dqn, a oct en, b oct en, a oct en, g oct en, d oct en ] :+:
+       line [g oct dqn, b oct en, c (oct+1) en, b oct en, a oct sn, b oct sn, a oct sn, snr] :+:
 
        line []
 
 
-base' = Modify (Phrase [Dyn (Loudness 200)])$ Modify (Instrument ElectricBassPicked ) $
-           (line (take 16 (cycle [c 3 en, a 2 en, e 3 en, a 2 en]))) :+:
-           (line (take 16 (cycle [b 2 en, g 2 en, d 3 en, g 2 en ])))
+
+t1 = tune (Modify (Phrase [Dyn (Loudness 50)]) . (Modify (Instrument Whistle))) 7
+t2 = t1
+
+
+base' = Modify (Phrase [Dyn (Loudness 80)]) $ Modify (Instrument ElectricBassPicked ) $
+           (line (take 16 (cycle [a 2 en, a 2 en, e 3 en, a 2 en]))) :+:
+           (line (take 16 (cycle [g 2 en, g 2 en, d 3 en, g 2 en ])))
+
 base 0 = line []
 base n = base' :+: base (n-1)
 
-music = (line [bnr] :+: rhythm 6) :=: (line [bnr, bnr] :+: tune) :=: base 4
+music = (line [bnr] :+: rhythm 10) :=: (line [bnr, bnr] :+: t1 :+: t2) :=: base 6
 
 doit = play music
 
