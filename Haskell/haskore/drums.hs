@@ -1,10 +1,29 @@
 import Euterpea
 
 rhythm n = Modify (Instrument Percussion) $
-                (line (take n (cycle [gs 3 en]))) :=:
-                (line (take n (cycle [c 3 en, rest en, e 3 en, rest en])))
+                (line (take (n * 8) (cycle [gs 3 en]))) :=:
+                (line (take (n * 8) (cycle [c 3 en, rest en, e 3 en, rest en])))
                 
-doit = play $ rhythm 100
+
+tune = line [wnr] :+:
+       line [a 4 dqn, b 4 en, c 5 en, b 4 en, a 4 en, e 4 en ] :+:
+       line [a 4 dqn, b 4 en, c 5 en, b 4 en, b 4 en, enr ] :+:
+       line [g 4 dqn, a 4 en, b 4 en, a 4 en, g 4 en, d 4 en ] :+:
+       line [g 4 dqn, a 4 en, b 4 en, a 4 en, a 4 en, enr]
+
+leftHand = Modify (Instrument PanFlute) $
+           line [wnr] :+:
+           line [a 4 wn] :+:
+           line [a 4 wn] :+:
+           line [g 4 wn] :+:
+           line [g 4 wn]
+
+
+
+
+music = tune :=: rhythm 5 :=: leftHand
+
+doit = play music
 
 
 
