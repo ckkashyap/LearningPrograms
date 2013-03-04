@@ -1,11 +1,11 @@
 import Euterpea
 
 rhythm n = Modify (Instrument Percussion) $
-                (line (take (n * 8) (cycle [gs 3 en]))) :=:
-                (line (take (n * 8) (cycle [c 3 en, rest en, e 3 en, rest en])))
+                (line (take (n * 16) (cycle [gs 3 en]))) :=:
+                (line (take (n * 16) (cycle [c 3 en, rest en, e 3 en, rest en])))
                 
 
-tune = line [wnr] :+:
+tune = 
        line [a 4 dqn, b 4 en, c 5 en, b 4 en, a 4 en, e 4 en ] :+:
        line [a 4 dqn, b 4 en, c 5 en, b 4 en, b 4 en, enr ] :+:
        line [g 4 dqn, a 4 en, b 4 en, a 4 en, g 4 en, d 4 en ] :+:
@@ -18,21 +18,14 @@ tune = line [wnr] :+:
 
        line []
 
-leftHand = Modify (Phrase [Dyn (Loudness   80)])$ Modify (Instrument SynthVoice) $
-           line [wnr] :+:
-           line [a 4 wn] :+:
-           line [a 4 wn] :+:
-           line [g 4 wn] :+:
-           line [g 4 wn]
 
-
-base' = Modify (Phrase [Dyn (Loudness   100)])$ Modify (Instrument AcousticBass ) $
-           (line (take 16 (cycle [a 2 en, c 3 en, e 3 en, c 3 en]))) :+:
-           (line (take 16 (cycle [g 2 en, b 2 en, d 3 en, b 2 en ])))
+base' = Modify (Phrase [Dyn (Loudness 200)])$ Modify (Instrument ElectricBassPicked ) $
+           (line (take 16 (cycle [c 3 en, a 2 en, e 3 en, a 2 en]))) :+:
+           (line (take 16 (cycle [b 2 en, g 2 en, d 3 en, g 2 en ])))
 base 0 = line []
 base n = base' :+: base (n-1)
 
-music = tune :=: rhythm 10 :=: leftHand :=: (line [wnr] :+: base 2)
+music = (line [bnr] :+: rhythm 6) :=: (line [bnr, bnr] :+: tune) :=: base 4
 
 doit = play music
 
