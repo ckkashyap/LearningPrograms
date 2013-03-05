@@ -1,50 +1,40 @@
 import Euterpea
 
-rhythm n = Modify (Instrument Percussion) $
-                (line (take (n * 16) (cycle [gs 3 en]))) :=:
-                (line (take (n * 16) (cycle [c 3 en, rest en, e 3 en, rest en])))
-
+rhythm = instrument Percussion $
+                      repeatM (_tsh) :=:
+                      repeatM (_dhugh :+: rest en :+: _dhush :+: rest en)
+                      where
+                        _tsh = perc PedalHiHat en
+                        _dhugh = perc BassDrum1 en
+                        _dhush = perc ElectricSnare en
                 
-
 tuneFirstPart f oct = f $
        line [a oct dqn, b oct en, c (oct+1) en, b oct en, a oct en, e oct en ] :+:
        line [a oct dqn, b oct en, c (oct+1) en, b oct en, b oct en, enr ] :+:
        line [g oct dqn, a oct en, b oct en, a oct en, g oct en, d oct en ] :+:
        line [g oct dqn, a oct en, b oct en, a oct en, a oct en, enr] :+:
-       line []
+       rest 0
    
 tuneSecondPart f oct = f $
        line [a oct dqn, b oct en, c (oct+1) en, b oct en, a oct en, e oct en ] :+:     
        line [a oct dqn, b oct en, c (oct+1) en, c (oct+1) en, b oct en, enr ] :+:
        line [g oct dqn, a oct en, b oct en, a oct en, g oct en, d oct en ] :+:
        line [g oct dqn, b oct en, c (oct+1) en, b oct en, a oct sn, b oct sn, a oct sn, snr] :+:
-       line []
-
-
+       rest 0
 
 tune f oct = (tuneFirstPart f oct) :+: (tuneSecondPart f oct)
      
-
-
-
-
-t1 = tuneFirstPart (Modify (Phrase [Dyn (Loudness 50)]) . (Modify (Instrument Whistle))) 7
-t2' i = tuneSecondPart (Modify (Phrase [Dyn (Loudness 50)]) . (Modify (Instrument i))) 7
+t1 = tuneFirstPart (phrase [Dyn (Loudness 50)] . (instrument Whistle)) 7
+t2' i = tuneSecondPart (phrase [Dyn (Loudness 50)] . (instrument i)) 7
 t2 = (t2' Whistle) :=: (t2' TubularBells)
 
-
-base' = Modify (Phrase [Dyn (Loudness 80)]) $ Modify (Instrument ElectricBassPicked ) $
+base = repeatM $ Modify (Phrase [Dyn (Loudness 80)]) $ Modify (Instrument ElectricBassPicked ) $
            (line (take 16 (cycle [a 2 en, a 2 en, e 3 en, a 2 en]))) :+:
            (line (take 16 (cycle [g 2 en, g 2 en, d 3 en, g 2 en ])))
 
-base 0 = line []
-base n = base' :+: base (n-1)
-
-music = (line [bnr] :+: rhythm 10) :=: (line [bnr, bnr] :+: t1 :+: t2) :=: base 6
+music = (bnr :+: rhythm) /=: (rest 4 :+: t1 :+: t2) /=: base
 
 doit = play music
-
-
 
 
 
