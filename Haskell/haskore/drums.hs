@@ -28,9 +28,9 @@ t1 = tuneFirstPart (phrase [Dyn (Loudness 50)] . (instrument Whistle)) 7
 t2' i = tuneSecondPart (phrase [Dyn (Loudness 50)] . (instrument i)) 7
 t2 = (t2' Whistle) :=: (t2' TubularBells)
 
-base = repeatM $ Modify (Phrase [Dyn (Loudness 80)]) $ Modify (Instrument ElectricBassPicked ) $
-           (line (take 16 (cycle [a 2 en, a 2 en, e 3 en, a 2 en]))) :+:
-           (line (take 16 (cycle [g 2 en, g 2 en, d 3 en, g 2 en ])))
+base = repeatM $ phrase [Dyn (Loudness 80)] $ instrument ElectricBassPicked $
+           timesM 4 (line [a 2 en, a 2 en, e 3 en, a 2 en]) :+:
+           timesM 4 (line [g 2 en, g 2 en, d 3 en, g 2 en ])
 
 music = (bnr :+: rhythm) /=: (rest 4 :+: t1 :+: t2) /=: base
 
