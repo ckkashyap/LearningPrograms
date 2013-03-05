@@ -1,12 +1,8 @@
 import Euterpea
 
 rhythm = instrument Percussion $
-                      repeatM (_tsh) :=:
-                      repeatM (_dhugh :+: rest en :+: _dhush :+: rest en)
-                      where
-                        _tsh = perc PedalHiHat en
-                        _dhugh = perc BassDrum1 en
-                        _dhush = perc ElectricSnare en
+                      repeatM (perc PedalHiHat en) :=:
+                      repeatM (perc BassDrum1 en :+: enr :+: perc ElectricSnare en :+: (timesM 2 $ perc BassDrum1 en) :+: enr :+: perc ElectricSnare en :+: enr  )
                 
 tuneFirstPart f oct = f $
        line [a oct dqn, b oct en, c (oct+1) en, b oct en, a oct en, e oct en ] :+:
