@@ -3,25 +3,34 @@ import Euterpea
 rhythm n = Modify (Instrument Percussion) $
                 (line (take (n * 16) (cycle [gs 3 en]))) :=:
                 (line (take (n * 16) (cycle [c 3 en, rest en, e 3 en, rest en])))
+
                 
 
-tune f oct = f $
+tuneFirstPart f oct = f $
        line [a oct dqn, b oct en, c (oct+1) en, b oct en, a oct en, e oct en ] :+:
        line [a oct dqn, b oct en, c (oct+1) en, b oct en, b oct en, enr ] :+:
        line [g oct dqn, a oct en, b oct en, a oct en, g oct en, d oct en ] :+:
        line [g oct dqn, a oct en, b oct en, a oct en, a oct en, enr] :+:
-
+       line []
+   
+tuneSecondPart f oct = f $
        line [a oct dqn, b oct en, c (oct+1) en, b oct en, a oct en, e oct en ] :+:     
        line [a oct dqn, b oct en, c (oct+1) en, c (oct+1) en, b oct en, enr ] :+:
        line [g oct dqn, a oct en, b oct en, a oct en, g oct en, d oct en ] :+:
        line [g oct dqn, b oct en, c (oct+1) en, b oct en, a oct sn, b oct sn, a oct sn, snr] :+:
-
        line []
 
 
 
-t1 = tune (Modify (Phrase [Dyn (Loudness 50)]) . (Modify (Instrument Whistle))) 7
-t2 = t1
+tune f oct = (tuneFirstPart f oct) :+: (tuneSecondPart f oct)
+     
+
+
+
+
+t1 = tuneFirstPart (Modify (Phrase [Dyn (Loudness 50)]) . (Modify (Instrument Whistle))) 7
+t2' i = tuneSecondPart (Modify (Phrase [Dyn (Loudness 50)]) . (Modify (Instrument i))) 7
+t2 = (t2' Whistle) :=: (t2' TubularBells)
 
 
 base' = Modify (Phrase [Dyn (Loudness 80)]) $ Modify (Instrument ElectricBassPicked ) $
