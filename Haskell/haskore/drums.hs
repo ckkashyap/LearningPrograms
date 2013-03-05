@@ -18,17 +18,20 @@ tuneSecondPart f oct = f $
        line [g oct dqn, b oct en, c (oct+1) en, b oct en, a oct sn, b oct sn, a oct sn, snr] :+:
        rest 0
 
-tune f oct = (tuneFirstPart f oct) :+: (tuneSecondPart f oct)
+oooh = phrase [Dyn (Loudness 30)] $ instrument SynthVoice $ line [a 5 bn, g 5 bn]
+
+tune f oct = oooh :=: ((tuneFirstPart f oct) :+: (tuneSecondPart f oct))
      
-t1 = tuneFirstPart (phrase [Dyn (Loudness 50)] . (instrument Whistle)) 7
-t2' i = tuneSecondPart (phrase [Dyn (Loudness 50)] . (instrument i)) 7
-t2 = (t2' Whistle) :=: (t2' TubularBells)
+t1' i o = (tuneFirstPart (phrase [Dyn (Loudness 50)] . (instrument i)) o)
+t1 = oooh :=: (t1' Whistle 7) :=: (t1' Sitar 4) 
+t2' i o = (tuneSecondPart (phrase [Dyn (Loudness 50)] . (instrument i)) o)
+t2 = oooh :=: (t2' Whistle 7) :=: (t2' Sitar 4) 
 
 base = repeatM $ phrase [Dyn (Loudness 80)] $ instrument ElectricBassPicked $
            timesM 4 (line [a 2 en, a 2 en, e 3 en, a 2 en]) :+:
            timesM 4 (line [g 2 en, g 2 en, d 3 en, g 2 en ])
 
-music = (bnr :+: rhythm) /=: (rest 4 :+: t1 :+: t2) /=: base
+music = (((bnr :+: rhythm) /=: (rest 4 :+: t1 :+: t2 :+: bnr)) :+: bnr) /=: base
 
 doit = play music
 
