@@ -6,19 +6,26 @@ rhythm = instrument Percussion $
                 
 
 
-base = repeatM $ phrase [Dyn (Loudness 80)] $ instrument AcousticGrandPiano $
+base = repeatM $ phrase [Dyn (Loudness 60)] $ instrument Harpsichord $
            (timesM 2 (line [a 3 qn, c 4 qn])) :+: (timesM 2 (line [a 3 qn, b 3 qn])) :+: (timesM 4 $ a 3 qn) :+: (timesM 2 (line [a 3 qn, b 3 qn]))
 
-chorus = repeatM $ phrase [Dyn (Loudness 100)] $ instrument SynthVoice $
-           line [a 4 wn, g 4 wn]
+chorus = repeatM $ phrase [Dyn (Loudness 30)] $ instrument SynthVoice $
+           line [a 4 wn, b 4 wn]
 
-deepVoice = repeatM $ phrase [Dyn (Loudness 100)] $ instrument SynthStrings1 $
-          chord [a 1 bn, c 2 bn, e 2 bn ]
+deepVoice = repeatM $ phrase [Dyn (Loudness 10)] $ instrument VoiceOohs $
+          chord [a 6 bn, c 7 bn, e 7 bn ]
 
 
-music = (bnr :+: (base :=: (transpose 3 base))) :=: rhythm :=: deepVoice 
+music = (bnr :+: bnr :+: (transpose 12 base)) :=: rhythm :=: deepVoice  :=: chorus
 
-doit = play music
+
+intro = takeM 12 music
+
+leadTrack = bnr
+
+song = intro :+: ((rhythm :=: deepVoice :=: chorus) /=: leadTrack)
+
+doit = play (tempo (3/2) song)
 
 
 
