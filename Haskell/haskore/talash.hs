@@ -8,7 +8,7 @@ base = repeatM $ transpose 12 $ phrase [Dyn (Loudness 40)] $ instrument Harpsich
            (timesM 2 (line [a 3 qn, c 4 qn])) :+: (timesM 2 (line [a 3 qn, b 3 qn])) :+: (timesM 4 $ a 3 qn) :+: (timesM 2 (line [a 3 qn, b 3 qn]))
 
 chorus = repeatM $ phrase [Dyn (Loudness 30)] $ instrument SynthVoice $
-           line [a 4 wn, b 4 wn]
+           line [a 4 wn, b 4 wn, e 4 wn, a 4 wn ]
 
 deepVoice = repeatM $ phrase [Dyn (Loudness 10)] $ instrument VoiceOohs $
           chord [a 6 bn, c 7 bn, e 7 bn ]
