@@ -23,9 +23,9 @@ oooh = phrase [Dyn (Loudness 30)] $ instrument SynthVoice $ line [a 5 bn, g 5 bn
 tune f oct = oooh :=: (touch (tuneFirstPart f oct) :+: (touch (tuneSecondPart f oct)))
      
 t1' i o = touch $ (tuneFirstPart (phrase [Dyn (Loudness 50)] . (instrument i)) o)
-t1 = oooh :=: (t1' TubularBells 7) :=: (t1' Violin 4) 
+t1 = oooh :=: (t1' TubularBells 7) :=: (t1' AcousticGrandPiano 4) 
 t2' i o = touch $ (tuneSecondPart (phrase [Dyn (Loudness 50)] . (instrument i)) o)
-t2 = oooh :=: (t2' TubularBells 7) :=: (t2' Violin 4) 
+t2 = oooh :=: (t2' TubularBells 7) :=: (t2' AcousticGrandPiano 4) 
 
 touch m = m :=: transpose (19) m :=: transpose 12 m
 
