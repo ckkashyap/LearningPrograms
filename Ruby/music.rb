@@ -1,10 +1,3 @@
-mus1 = {:Type => :Note, :Pitch => :A3 , :Duration => 1}
-mus2 = {:Type => :Note, :Pitch => :B3 , :Duration => 1}
-mus3 = {:Type => :Rest, :Duration => 0 }
-mus4 = {:Type => :Serial, :P1 => mus1, :P2 => mus2}
-mus5 = {:Type => :Parallel, :P1 => mus1, :P2 => mus2}
-
-
 def Rest(d)
   {:Type => :Rest, :Duration => d}
 end
@@ -76,7 +69,7 @@ def duration(m)
 end
 
 
-def printMusic(m, s, d, o)
+def parse(m, s, d, o)
   t = m[:Type]
   dur = 0
   case t
@@ -94,16 +87,37 @@ def printMusic(m, s, d, o)
     p1 = m[:P1]
     pd1 = duration(p1)
     p2 = m[:P2]
-    printMusic(p1, s, d, o)
-    printMusic(p2, s, d + pd1, o)
+    parse(p1, s, d, o)
+    parse(p2, s, d + pd1, o)
   when :Parallel
     p1 = m[:P1]
     p2 = m[:P2]
-    printMusic(m[:P1], s, d, o)
-    printMusic(m[:P2], s + 4, d, o)
+    parse(m[:P1], s, d, o)
+    parse(m[:P2], s + 4, d, o)
   end
 end
 
+def perform(o)
+  pt = 0
+  for i in o.keys.sort
+    dd = 0
+    if i > pt
+#      puts "#{i} #{pt} sleep #{i - pt}"
+      puts "sleep #{i - pt}"
+      pt = i
+    end
+    for j in o[i]
+      t = j[:Type]
+      p = j[:Pitch]
+      d = j[:Duration]
+      if d > dd
+        dd = d 
+      end
+#      puts "i=#{i} pt=#{pt} play #{p}, release: #{d}" if t != :Rest
+      puts "play :#{p}, release: #{d}" if t != :Rest
+    end
+  end
+end
 
 def nd2l(ns,ds)
   a = []
@@ -114,40 +128,10 @@ def nd2l(ns,ds)
 end
 
 
-
-
-m = Serial(mus1, mus2)
-l = line [Note(:C3,1), Note(:D3,1), Rest(4), Note(:E3,1), Note(:F3,1)]
-
-mm = Parallel(m,l)
-
-mmm = Serial(mm, mm)
-
-
-
-o={}
-pt = 0
-printMusic(mmm, 0, 0, o)
-
-
-
-for i in o.keys.sort
-  dd = 0
-  if i > pt
-    puts "#{i} #{pt} sleep #{i - pt}"
-    pt = i
-  end
-  for j in o[i]
-    t = j[:Type]
-    p = j[:Pitch]
-    d = j[:Duration]
-    if d > dd
-      dd = d 
-    end
-    puts "i=#{i} pt=#{pt} play #{p}, release: #{d}" if t != :Rest
-  end
-end
-
-
-mmmm=nd2l([:C3, :D3, :E3], [1,1,1]);
-printMusic(mmmm, 0, 0, {});
+m1 = nd2l([:C3, :D3, :E3, :F3, :G3, :A3, :B3, :C4], [1].cycle)
+m2 = nd2l([:E3, :F3, :G3, :A3, :B3, :C4, :D4, :E4], [1].cycle)
+m3 = nd2l([:G3, :A3, :B3, :C4, :D4, :E4, :F4, :G4], [1].cycle)
+mus = Parallel(Parallel(m1,m2), m3)
+o = {};
+parse(mus, 0, 0, o)
+perform(o)
