@@ -103,7 +103,7 @@ def perform(o)
     dd = 0
     if i > pt
 #      puts "#{i} #{pt} sleep #{i - pt}"
-      puts "sleep #{i - pt}"
+      puts "sleep #{(i * 1.0) - (pt * 1.0)}"
       pt = i
     end
     for j in o[i]
@@ -128,10 +128,10 @@ def nd2l(ns,ds)
 end
 
 
-m1 = nd2l([:C3, :D3, :E3, :F3, :G3, :A3, :B3, :C4], [1].cycle)
-m2 = nd2l([:E3, :F3, :G3, :A3, :B3, :C4, :D4, :E4], [1].cycle)
-m3 = nd2l([:G3, :A3, :B3, :C4, :D4, :E4, :F4, :G4], [1].cycle)
-mus = Parallel(Parallel(m1,m2), m3)
+m1 = nd2l([:C3, :D3, :E3, :F3, :G3, :A3, :B3, :C4], [0.3].cycle)
+beats = nd2l(([:A3].cycle.take 20), [0.3].cycle)
+m3 = nd2l([:G3, :A3, :B3, :C4, :D4, :E4, :F4, :G4], [0.3].cycle)
+mus = Parallel(Parallel(m1,beats), m3)
 o = {};
 parse(mus, 0, 0, o)
 perform(o)
