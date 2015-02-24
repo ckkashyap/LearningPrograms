@@ -1,0 +1,78 @@
+# Copy this to the sdl2/src  directory  and build
+
+# Generate and playback a sine tone
+
+import sdl2
+import sdl2/audio
+#import math
+
+
+const PI  = 3.14
+
+proc round*(v:float): int {.importc: "round".}
+proc sin*(v:float): float {.importc: "sin".}
+
+
+
+# Audio settings requested:
+const RQBufferSizeInSamples = 4096
+const RQBytesPerSample = 2  # 16 bit PCM
+const RQBufferSizeInBytes = RQBufferSizeInSamples * RQBytesPerSample
+let SampleRate = 44100    # Hz
+
+# What tone to generate:
+let Frequence = 440      # Hz
+let Volume = 0.1          # [0..1]
+
+# Current playback position
+var x = 0 
+
+# Variables
+var buffer: array[RQBufferSizeInBytes*16, int16] # Allocate a safe amount of memory
+var obtained: TAudioSpec # Actual audio parameters SDL returns
+
+# Generate a sine wave
+let c = float(SampleRate) / float(Frequence)
+proc SineAmplitude(): int16 =
+  let r = cast[int16](round(sin(float(x mod int(c)) / c * 2 * PI) * 32767 * Volume))
+  if r > 32767:
+    return 32767
+  return r
+
+# 3 different callback procedures which do the same thing:
+
+# Write amplitude direct to hardware buffer
+proc AudioCallback_1(userdata: pointer; stream: ptr uint8; len: cint) {.cdecl.} = 
+  for i in 0..int16(obtained.samples)-1:
+      cast[ptr int16](cast[int](stream) + i * RQBytesPerSample)[] = SineAmplitude()
+      inc(x)
+
+proc main() =
+  # Init audio playback
+  if Init(INIT_AUDIO) != SdlSuccess:
+    echo("Couldn't initialize SDL\n")
+    return
+  var audioSpec: TAudioSpec
+  audioSpec.freq = cint(SampleRate)
+  audioSpec.format = AUDIO_S16 # 16 bit PCM
+  audioSpec.channels = 1       # mono
+  audioSpec.samples = RQBufferSizeInBytes
+  audioSpec.padding = 0
+  audioSpec.callback = AudioCallback_1
+  audioSpec.userdata = nil
+  if OpenAudio(addr(audioSpec), addr(obtained)) != 0:
+    echo("Couldn't open audio device. " & $GetError() & "\n")
+    return
+  echo("frequency: ", obtained.freq)
+  echo("format: ", obtained.format)
+  echo("channels: ", obtained.channels)
+  echo("samples: ", obtained.samples)
+  echo("padding: ", obtained.padding)
+  if obtained.format != AUDIO_S16:
+    echo("Couldn't open 16-bit audio channel.")
+    return 
+  # Playback audio for 2 seconds
+  PauseAudio(0)
+  Delay(2000)
+
+main()
