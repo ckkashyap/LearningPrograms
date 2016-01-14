@@ -1,8 +1,8 @@
 <!-- begin metadata
-    title=Perl
-    date=22 July, 2009
-    occasion=Tech talk
-    shortoccasion=techtalk
+    title=Autobug
+    date=14 Juanuary, 2016
+    occasion=Design documentation
+    shortoccasion=overview
     octoc=true
 end metadata -->
 

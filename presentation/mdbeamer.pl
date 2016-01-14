@@ -192,7 +192,7 @@ print "\\end{document}\n";
 __DATA__
     \documentclass{beamer}
 
-    \usecolortheme[RGB={138,43,226}]{structure} 
+    \usecolortheme[RGB={3,165,240}]{structure} 
 
 
     \mode<presentation>
@@ -211,23 +211,23 @@ __DATA__
     \subtitle
     {#subtitle}
 
-    \definecolor{yahoo}{RGB}{138,43,226}
-    \setbeamercolor{yahoo_color}{fg=white,bg=yahoo}
+    \definecolor{microsoft}{RGB}{3,165,240}
+    \setbeamercolor{microsoft_color}{fg=white,bg=microsoft}
 
     \author[Kashyap] % (optional, use only with lots of authors)
     {CK Kashyap}
 
-    \institute[Yahoo!] % (optional, but mostly needed)
+    \institute[Microsoft] % (optional, but mostly needed)
     {
-      Yahoo!\\
-      Bangalore}
+      Microsoft\\
+      Redmond}
 
     \date[#shortoccasion] % (optional)
     {#date / #occasion}
 
     \subject{Talks}
 
-    \pgfdeclareimage[height=0.74cm]{company-logo}{yahoo}
+    \pgfdeclareimage[height=0.74cm]{company-logo}{microsoft}
     \logo{\pgfuseimage{company-logo}}
 
     %% sita, from page 67 of the beamer userguide
