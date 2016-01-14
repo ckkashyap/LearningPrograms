@@ -48,7 +48,7 @@ $|++;
 # actual input file
 if ($content =~ s/<!-- begin metadata(.*?)end metadata -->//s) {
     my $metadata = $1;
-    for my $i qw(title shorttitle subtitle occasion shortoccasion date style toctoc tictoc) {
+    for my $i (qw(title shorttitle subtitle occasion shortoccasion date style toctoc tictoc)) {
         $metadata{$i} = $1 if ($metadata =~ /$i *= *(.*?) *$/m);
     }
 }
@@ -65,7 +65,7 @@ $metadata{style} ||= "Darmstadt";
 $preamble =~ s({#date / #occasion})({#date}) unless $metadata{occasion};
 
 # now substitute those in the preamble we pulled in earlier
-for my $i qw(title shorttitle subtitle occasion shortoccasion date style) {
+for my $i (qw(title shorttitle subtitle occasion shortoccasion date style)) {
     $preamble =~ s/#$i/$metadata{$i}/;
 }
 
