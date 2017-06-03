@@ -31,8 +31,12 @@ close CONF;
 # Create the certificate
 chdir $CADIR;
 `openssl ca -batch -config openssl.cnf -extensions v3_intermediate_ca -passin pass:$KEY_PASSWORD -days 3650 -notext -md sha256 -in $INTERMEDIATE_DIR/csr/ca.csr.pem  -out $INTERMEDIATE_DIR/certs/ca.cert.pem`;
+`chmod 444 certs/ca.cert.pem`;
 # Print the certificate
-#system("openssl x509 -noout -text -in certs/intermediate.cert.pem");
+chdir $INTERMEDIATE_DIR;
+system("openssl x509 -noout -text -in certs/ca.cert.pem");
+
+system("openssl verify -CAfile $CADIR/certs/ca.cert.pem certs/ca.cert.pem");
 
 sub getOpenSSLConf
 {
