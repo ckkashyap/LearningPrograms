@@ -8,33 +8,24 @@ chomp$SCRIPTDIR;
 my$KEY_PASSWORD="helloworld123";
 
 # Create intermediate certificates
-my$INTERMEDIATE_DIR="$SCRIPTDIR/Intermediates";
-my$CADIR="$SCRIPTDIR/CA";
-`rm -rf $INTERMEDIATE_DIR`;
-mkdir $INTERMEDIATE_DIR;
-chdir $INTERMEDIATE_DIR;
-mkdir $_ for qw(certs crl csr newcerts private);
-`chmod 700 private`;
-`touch index.txt`;
-` echo 1000 > serial`;
-`echo 1000 > crlnumber`;
+my$ServerDir="$SCRIPTDIR/Server";
+my$CADIR="$SCRIPTDIR/Intermediates";
+`rm -rf $ServerDir`;
+mkdir $ServerDir;
+chdir $ServerDir;
 # Create key
-`openssl genrsa -aes256 -out private/ca.key.pem -passout pass:$KEY_PASSWORD 4096`;
-`chmod 400 private/ca.key.pem`;
-# Create 
-# Create a cert request and self-signed CA certificate
+`openssl genrsa -aes256 -out server.key.pem -passout pass:$KEY_PASSWORD 4096`;
+`chmod 400 server.key.pem`;
+
+
 open CONF,">openssl.cnf";
-print CONF getOpenSSLConf($INTERMEDIATE_DIR, "policy_loose");
+print CONF getOpenSSLConf($CADIR, "policy_loose");
 close CONF;
-`openssl req -config openssl.cnf -key private/ca.key.pem -passin pass:$KEY_PASSWORD -new -sha256 -out csr/ca.csr.pem`;
+# Create request
+`openssl req -config openssl.cnf -key server.key.pem -passin pass:$KEY_PASSWORD -new -sha256 -out csr.pem`;
 
-# Create the certificate
-`openssl ca -batch -config $CADIR/openssl.cnf -extensions v3_intermediate_ca -passin pass:$KEY_PASSWORD -days 3650 -notext -md sha256 -in $INTERMEDIATE_DIR/csr/ca.csr.pem  -out $INTERMEDIATE_DIR/certs/ca.cert.pem`;
-`chmod 444 certs/ca.cert.pem`;
-# Print the certificate
-system("openssl x509 -noout -text -in certs/ca.cert.pem");
+`openssl ca -batch -config $CADIR/openssl.cnf  -passin pass:$KEY_PASSWORD  -extensions server_cert -days 375 -notext -md sha256 -in csr.pem -out cert.pem`;
 
-system("openssl verify -CAfile $CADIR/certs/ca.cert.pem certs/ca.cert.pem");
 
 sub getOpenSSLConf
 {
@@ -113,7 +104,7 @@ stateOrProvinceName             = Washington
 localityName                    = Redmond
 0.organizationName              = Imaginary
 organizationalUnitName          = Imaginary unit
-commonName                      = ImaginaryInter
+commonName                      = www.example.com
 
 [ v3_ca ]
 # Extensions for a typical CA (`man x509v3_config`).
