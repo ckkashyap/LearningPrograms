@@ -1,13 +1,16 @@
 <html>
-    <body>
-        <script type="text/javascript" src="out/goog/base.js"></script>
-        <script type="text/javascript" src="out/main.js"></script>
-          <script type="text/javascript">
-            goog.require("hello_world.core");
-                        // Note the underscore "_"! 
-          </script>
+  <body>
+    <script type="text/javascript"> 
+      var CLOSURE_NO_DEPS = true; 
+    </script> 
+    <script type="text/javascript" src="out/goog/base.js"></script>
+    <script type="text/javascript" src="out/main.js"></script>
+    <script type="text/javascript">
+      goog.require("hello_world.core");
+      // Note the underscore "_"! 
+    </script>
 
-	  <button onclick="hello_world.core.hello()">Click</button>
-	  <div id="main_div"/>
-    </body>
+    <button onclick="hello_world.core.hello()">Click</button>
+    <div id="main_div">Empty div</div>
+  </body>
 </html>
