@@ -1,0 +1,5 @@
+clojurescript/cljs.jar
+clojurescript/out/*
+clojurescript/.cpcache/*
+electronapp/out/*
+electronapp/.cpcache/*
