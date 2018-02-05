@@ -1,8 +1,6 @@
 {
  :deps {
-        clj-time {:mvn/version "0.14.2"}
         org.clojure/clojurescript {:mvn/version "1.9.946"}
         org.clojure/core.async {:mvn/version "0.2.391"}        
  }
- }
-
+}
