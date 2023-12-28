@@ -3,3 +3,4 @@ clojurescript/out/*
 clojurescript/.cpcache/*
 electronapp/out/*
 electronapp/.cpcache/*
+*.exe
