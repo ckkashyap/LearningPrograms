@@ -185,23 +185,6 @@ void uv_async_callback(uv_async_t* handle) {
 	}
 }
 
-// UV thread function
-void uv_thread_func(void* arg) {
-	// UV loop initialization
-	uv_loop = uv_default_loop();
-
-	// TCP handle initialization
-	uv_tcp_init(uv_loop, &tcp);
-
-	// Initialize the message queue and mutex
-	uv_async_init(uv_loop, &message_queue, uv_async_callback);
-	uv_mutex_init(&message_mutex);
-
-	// Run the UV loop
-	uv_run(uv_loop, UV_RUN_DEFAULT);
-	printf("UV loop stopped\n");
-}
-
 int main() {
 	// Initialize SDL
 	SDL_Init(SDL_INIT_VIDEO);
