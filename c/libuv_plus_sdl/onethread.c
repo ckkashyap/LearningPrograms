@@ -6,6 +6,9 @@
 #define WINDOW_HEIGHT 600
 #define CIRCLE_RADIUS 10
 
+
+#define THREADID { uv_thread_t currentThreadId = uv_thread_self(); printf("%s Current Thread ID: %lu\n", __func__,  (unsigned long)currentThreadId);}
+
 // UV loop and SDL loop handlers
 uv_loop_t* uv_loop;
 SDL_Window* window;
@@ -46,12 +49,14 @@ typedef struct {
 
 // Callback for allocating read buffer
 void alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf) {
+	THREADID
 	buf->base = (char*) malloc(suggested_size);
 	buf->len = suggested_size;
 }
 
 // Callback for handling TCP read completion
 void on_tcp_read(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) {
+	THREADID
 	if (nread > 0) {
 		// Handle the received data here
 		// For simplicity, we'll just print the response
@@ -82,6 +87,7 @@ void on_tcp_read(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) {
 
 // Callback for handling TCP write completion
 void on_tcp_write(uv_write_t* req, int status) {
+	THREADID
 	if (status == 0) {
 		printf("HTTP GET request sent successfully\n");
 
@@ -100,6 +106,7 @@ void on_tcp_write(uv_write_t* req, int status) {
 
 // Callback for handling TCP connection
 void on_tcp_connect(uv_connect_t* req, int status) {
+	THREADID
 	if (status == 0) {
 		printf("TCP Connection successful\n");
 
@@ -115,10 +122,42 @@ void on_tcp_connect(uv_connect_t* req, int status) {
 	}
 }
 
+void worker(uv_work_t *req)
+{
+	THREADID
+	printf("worker callback\n");
+}
+
+void after_work(uv_work_t *req, int status)
+{
+	THREADID
+	printf("WORK DONE\n");
+
+	// Process pending messages
+	uv_mutex_lock(&message_mutex);
+	ConnectMessage message = pending_message;
+	uv_mutex_unlock(&message_mutex);
+
+	if ( !uv_is_closing((const uv_handle_t*)&tcp)) {
+		// Handle the message
+		uv_connect_t* connect_req = &message.connect_req;
+		uv_tcp_connect(connect_req, &tcp, (const struct sockaddr*)&message.dest, on_tcp_connect);
+	}
+	else
+	{
+		uv_tcp_init(uv_loop, &tcp);
+		uv_connect_t* connect_req = &message.connect_req;
+		uv_tcp_connect(connect_req, &tcp, (const struct sockaddr*)&message.dest, on_tcp_connect);
+	}
+
+	free(req);
+}
+
 
 
 // SDL event handler
 void handle_sdl_events() {
+	THREADID
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
@@ -157,7 +196,10 @@ void handle_sdl_events() {
 					uv_ip4_addr("127.0.0.1", 8080, &pending_message.dest);
 					uv_mutex_unlock(&message_mutex);
 
-					uv_async_send(&message_queue);
+
+					uv_work_t *work = (uv_work_t*)malloc(sizeof(uv_work_t));
+					work->data = work;
+					uv_queue_work(uv_loop, work, worker, after_work);
 				}
 				break;
 			default:
@@ -166,28 +208,8 @@ void handle_sdl_events() {
 	}
 }
 
-// Callback for handling UV loop events
-void uv_async_callback(uv_async_t* handle) {
-	printf("callback\n");
-	// Process pending messages
-	uv_mutex_lock(&message_mutex);
-	ConnectMessage message = pending_message;
-	uv_mutex_unlock(&message_mutex);
-
-	if ( !uv_is_closing((const uv_handle_t*)&tcp)) {
-		// Handle the message
-		uv_connect_t* connect_req = &message.connect_req;
-		uv_tcp_connect(connect_req, &tcp, (const struct sockaddr*)&message.dest, on_tcp_connect);
-	}
-	else
-	{
-		uv_tcp_init(uv_loop, &tcp);
-		uv_connect_t* connect_req = &message.connect_req;
-		uv_tcp_connect(connect_req, &tcp, (const struct sockaddr*)&message.dest, on_tcp_connect);
-	}
-}
-
 int main() {
+	THREADID
 	// Initialize SDL
 	SDL_Init(SDL_INIT_VIDEO);
 
@@ -202,7 +224,6 @@ int main() {
 	uv_tcp_init(uv_loop, &tcp);
 
 	// Initialize the message queue and mutex
-	uv_async_init(uv_loop, &message_queue, uv_async_callback);
 	uv_mutex_init(&message_mutex);
 
 
