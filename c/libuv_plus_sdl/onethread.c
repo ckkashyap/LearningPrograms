@@ -93,6 +93,8 @@ void on_tcp_write(uv_write_t* req, int status) {
 		// Cleanup the write request handle
 		uv_close((uv_handle_t*)req, NULL);
 	}
+
+	free(req);
 }
 
 
