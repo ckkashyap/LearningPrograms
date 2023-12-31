@@ -25,6 +25,8 @@ uv_async_t message_queue;
 uv_mutex_t message_mutex;
 ConnectMessage pending_message;
 
+
+
 // HTTP GET request data
 const char* http_request = "GET / HTTP/1.1\r\n"
 "Host: localhost:8080\r\n"
@@ -116,6 +118,33 @@ void on_tcp_connect(uv_connect_t* req, int status) {
 
 }
 
+void worker(uv_work_t *req)
+{
+	printf("worker callback\n");
+}
+
+void after_work(uv_work_t *req, int status)
+{
+	free(req);
+	printf("WORK DONE\n");
+
+	// Process pending messages
+	uv_mutex_lock(&message_mutex);
+	ConnectMessage message = pending_message;
+	uv_mutex_unlock(&message_mutex);
+
+	if ( !uv_is_closing((const uv_handle_t*)&tcp)) {
+		// Handle the message
+		uv_connect_t* connect_req = &message.connect_req;
+		uv_tcp_connect(connect_req, &tcp, (const struct sockaddr*)&message.dest, on_tcp_connect);
+	}
+	else
+	{
+		uv_tcp_init(uv_loop, &tcp);
+		uv_connect_t* connect_req = &message.connect_req;
+		uv_tcp_connect(connect_req, &tcp, (const struct sockaddr*)&message.dest, on_tcp_connect);
+	}
+}
 
 
 // SDL event handler
@@ -158,7 +187,10 @@ void handle_sdl_events() {
 					uv_ip4_addr("127.0.0.1", 8080, &pending_message.dest);
 					uv_mutex_unlock(&message_mutex);
 
-					uv_async_send(&message_queue);
+					uv_work_t *work = (uv_work_t*)malloc(sizeof(uv_work_t));
+					work->data = work;
+					//uv_async_send(&message_queue);
+					uv_queue_work(uv_loop, work, worker, after_work);
 				}
 				break;
 			default:
@@ -166,6 +198,8 @@ void handle_sdl_events() {
 		}
 	}
 }
+
+
 
 // Callback for handling UV loop events
 void uv_async_callback(uv_async_t* handle) {
@@ -191,7 +225,7 @@ void uv_async_callback(uv_async_t* handle) {
 // UV thread function
 void uv_thread_func(void* arg) {
 	// UV loop initialization
-	uv_loop = uv_default_loop();
+	//uv_loop = uv_default_loop();
 
 	// TCP handle initialization
 	uv_tcp_init(uv_loop, &tcp);
@@ -208,6 +242,7 @@ void uv_thread_func(void* arg) {
 int main() {
 	// Initialize SDL
 	SDL_Init(SDL_INIT_VIDEO);
+	uv_loop = uv_default_loop();
 
 	// Create SDL window and renderer
 	window = SDL_CreateWindow("SDL+libuv Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
